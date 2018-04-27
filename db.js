@@ -18,7 +18,7 @@ const options = {
 const db = mongoose.connect(app.DB_URL, options).then(console.log('Mongo DB works fine'));
 
 var vote = {
-    create: (organisationID, description, endTime) => {
+    create: (organisationID, description, sum, endTime) => {
         Vote.find({}, {sort: -1}, (err,doc) => {
             var voteID;
             if (doc.length != 0) {
@@ -31,6 +31,7 @@ var vote = {
                 voteID: voteID,
                 organisationID: organisationID,
                 description: description,
+                sum: sum,
                 endTime: endTime
             }, (err, doc) => {
                 if (err) {

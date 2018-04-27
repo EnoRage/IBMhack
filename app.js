@@ -87,15 +87,19 @@ bot.dialog("create_vote", [
             }
         }
 
-        builder.Prompts.text(session, "Введите описание голосования");
+        builder.Prompts.text(session, "Введите описание пожертвования");
     },
     (session, results, next) => {
-        session.userData.description = results.responsel
+        session.userData.description = results.response;
+        builder.Prompts.number(session, "Введите необходимую сумму");
+    },
+    (session, results, next) => {
+        session.userData.sum = results.response;
         builder.Prompts.time(session, "Введите дату окончания голосования");
     },
-    (session, results, next) => {
+    (session, results, next) => { 
         let endDate = new Date(builder.EntityRecognizer.resolveTime([results.response])).getTime();
-        db.vote.create(organisation.organisationID, session.userData.description, endDate);
+        db.vote.create(organisation.organisationID, session.userData.description, session.userData.sum, endDate);
         session.send('Голосование успешно создано');
         next();
     }
@@ -129,7 +133,7 @@ bot.dialog("vote", [
 
         db.vote.findAll((votes) => {
             for (let i in votes) {
-                for (let g in session.userData.userOrganisations){
+                for (let j in session.userData.userOrganisations){
                     if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID) {
                         voteMsgArray.push('Организация: '+organisation.name + 'планирует собрать ' +votes[i].sum + 'у.е., чтобы ' + votes[i].description + 'Вы одобряете?');
                     }
@@ -167,7 +171,7 @@ bot.dialog("sacrifice", [
 
         let msg = '**Вы выбрали:** ' + organisation.name + '\n\n\0\n\n' +
             '**Страна:** ' + organisation.country + '\n\n' +
-            '**Состояние** :' + organisation.capital + '\n\n' +
+            '**Состояние**: ' + organisation.capital + 'млрд. дол.\n\n' +
             '**Цель:** ' + organisation.mission;
         session.send(msg);
         db.user.balance(session.message.user.id, (balance) => {
