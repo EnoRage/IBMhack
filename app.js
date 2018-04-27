@@ -28,7 +28,11 @@ bot.dialog("start", [
                 });
             } else {
                 db.user.create(session.message.user.id, session.message.user.name);
-                session.beginDialog('start');
+                let msg = "Главное меню";
+                Menu.makeMenu(session, session.message.user.id, msg, Key.keyboards.mainMenu, 'start', false, (msg_id) => {
+                    // Тут пиши тело функции
+                    next();
+                });
             }
         })
     }
