@@ -5,7 +5,8 @@ const Server = require("./server.js"),
     rp = require('request-promise'),
     Menu = require('./replaceMenu.js'),
     Dialogs = require('./dialogs.js'),
-    Key = require('./buttons.js');
+    Key = require('./buttons.js'),
+    Card = require('./cards.js');
 
 var org_object;
 var organisation;
@@ -129,18 +130,17 @@ bot.dialog("vote", [
                 organisation = org_object[i];
             }
         }
-        var voteMsgArray = [];
 
         db.vote.findAll((votes) => {
             for (let i in votes) {
                 for (let j in session.userData.userOrganisations){
                     if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID) {
-                        voteMsgArray.push('Организация: '+organisation.name + 'планирует собрать ' +votes[i].sum + 'у.е., чтобы ' + votes[i].description + 'Вы одобряете?');
+                        let msg = 'Организация: **'+organisation.name + '** планирует собрать **' +votes[i].sum + ' у.е.**, чтобы **' + votes[i].description + '**\n\n\0\n\nВы одобряете?';
+                        let card = Card.voteCard(session, msg, votes[i].voteID);
+                        var text = new builder.Message(session).addAttachment(card);
+                        session.send(text);
                     }
                 }
-            }
-            for (let i in voteMsgArray) {
-                session.send(voteMsgArray[i]);
             }
         })
     }
