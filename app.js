@@ -181,7 +181,7 @@ bot.dialog('statistica', [
                                         no++;
                                     }
 
-                                    let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\n\0\n\nСтатистака: \n\nЗа: ${yes} человек\n\nПротив: ${no} человек. Если вы ещё не голосовали - можете проголосовать`;
+                                    let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\nСтатистака: \nЗа: ${yes} человек\nПротив: ${no} человек. Если вы ещё не голосовали - можете проголосовать`;
                                     let card = Card.voteCard(session, msg, votes[i].voteID);
                                     var text = new builder.Message(session).addAttachment(card);
                                     session.send(text);
@@ -214,7 +214,7 @@ bot.dialog('doVote', [
                 for (let j in session.userData.userOrganisations) {
                     if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID) {
                         counter++;
-                        let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\n\0\n\nВы одобряете?`;
+                        let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\nВы одобряете?`;
                         let card = Card.voteCard(session, msg, votes[i].voteID);
                         var text = new builder.Message(session).addAttachment(card);
                         session.send(text);
