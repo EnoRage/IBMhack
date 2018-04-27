@@ -93,7 +93,7 @@ bot.dialog("create_vote", [
         builder.Prompts.time(session, "Введите дату окончания голосования");
     },
     (session, results, next) => {
-        let endDate = new Date(results.response).getTime();
+        let endDate = new Date(builder.EntityRecognizer.resolveTime([results.response])).getTime();
         db.vote.create(organisation.organisationID, session.userData.description, endDate);
         session.send('Голосование успешно создано');
         next();
