@@ -33,8 +33,6 @@ const keyboards = {
 
     organisation: [
         [{
-            text: buttons.normal_buttons.btn_add_organisation
-        }, {
             text: buttons.normal_buttons.btn_create_vote
         }],
         [{
