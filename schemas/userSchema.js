@@ -23,7 +23,7 @@ var user = new Schema({
         type: String,
         default: 10000
     },
-    organisations: [{type: String}]
+    organisations: [{type: Object}]
 }, {
     versionKey: false
 });
