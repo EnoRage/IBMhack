@@ -109,5 +109,5 @@ bot.dialog('back', [
         }
     }
 ]).triggerAction({
-    matches: /❌  Назад/i
+    matches: Key.buttons.regular_expression.btn_back
 });
