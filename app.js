@@ -114,16 +114,14 @@ bot.dialog("vote", [
         db.organisation.findAll((organisations) => {
             db.user.find(session.message.user.id, (user) => {
                 session.userData.userOrganisations = user[0].organisations;
-                console.log('aaa')
                 var counter = 0;
-                org_object = [];
+                org_object = organisations;
                 var organisationNames = [];
                 for (let i in organisations) {
                     for (let j in session.userData.userOrganisations) {
                         if (organisations[i].organisationID == session.userData.userOrganisations[j].organisationID) {
                             counter++;
                             organisationNames.push(organisations[i].name);
-                            console.log('dddd')
                             break;
                         }
                     }
