@@ -1,5 +1,6 @@
 const Server = require("./server.js"),
     db = require("./db.js"),
+    utils = require('./utils.js'),
     builder = require('botbuilder'),
     rp = require('request-promise'),
     Menu = require('./replaceMenu.js'),
@@ -85,7 +86,7 @@ bot.dialog("create_vote", [
                 organisation = org_object[i];
             }
         }
-        
+
         builder.Prompts.text(session, "Введите описание голосования");
     },
     (session, results, next) => {
@@ -100,6 +101,47 @@ bot.dialog("create_vote", [
     }
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_create_vote
+});
+
+bot.dialog("vote", [
+    (session, args, next) => {
+        db.user.find(session.message.user.id, (user) => {
+            session.userData.userOrganisations = user[0].organisations;
+        });
+        db.organisation.findAll((organisations) => {
+            org_object = organisations;
+            var organisationNames = [];
+            for (let i in organisations) {
+                organisationNames.push(organisations[i].name);
+            }
+            builder.Prompts.choice(session, "Чтобы посмотреть активные голосования - выберите организацию", organisationNames, {
+                listStyle: builder.ListStyle.button
+            });
+        });
+    },
+    (session, results, next) => {
+        for (let i in org_object) {
+            if (org_object[i].name == results.response.entity) {
+                organisation = org_object[i];
+            }
+        }
+        var voteMsgArray = [];
+
+        db.vote.findAll((votes) => {
+            for (let i in votes) {
+                for (let g in session.userData.userOrganisations){
+                    if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID) {
+                        voteMsgArray.push('Организация: '+organisation.name + 'планирует собрать ' +votes[i].sum + 'у.е., чтобы ' + votes[i].description + 'Вы одобряете?');
+                    }
+                }
+            }
+            for (let i in voteMsgArray) {
+                session.send(voteMsgArray[i]);
+            }
+        })
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_vote
 });
 
 bot.dialog("sacrifice", [
@@ -141,14 +183,6 @@ bot.dialog("sacrifice", [
     }
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_sacrifice
-});
-
-bot.dialog("vote", [
-    (session, args, next) => {
-        session.send('Проголосвать');
-    }
-]).triggerAction({
-    matches: Key.buttons.regular_expression.btn_vote
 });
 
 bot.dialog('back', [

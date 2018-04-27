@@ -11,6 +11,9 @@ var vote = new Schema({
     description: {
         type: String
     },
+    sum: {
+        type: Number
+    },
     startTime: {
         type: Number,
         default: Date.now()

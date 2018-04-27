@@ -53,7 +53,7 @@ var vote = {
             callback(doc[0]);
         });
     },
-    findAll: () => {
+    findAll: (callback) => {
         Vote.find({}, (err, doc) => {
             if (err) {
                 console.log(err);
@@ -175,6 +175,23 @@ var user = {
 }
 
 var organisation = {
+    create: (organisationID, name, foundateDate, capital, country, mission, balance) => {
+        Organisation.create({
+            organisationID: Number(organisationID),
+            name: name,
+            foundateDate: foundateDate,
+            capital: Number(capital),
+            country: country,
+            mission: mission,
+            balance: Number(balance)
+        }, (err, doc) => {
+            if (err) {
+                console.log(err)
+            }
+            console.log(doc)
+            return;
+        })
+    },
     findAll: (callback) => {
         Organisation.find({}, (err, doc) => {
             if (err) {
@@ -195,23 +212,6 @@ var organisation = {
             }
 
             callback(doc[0]);
-        })
-    },
-    create: (organisationID, name, foundateDate, capital, country, mission, balance) => {
-        Organisation.create({
-            organisationID: Number(organisationID),
-            name: name,
-            foundateDate: foundateDate,
-            capital: Number(capital),
-            country: country,
-            mission: mission,
-            balance: Number(balance)
-        }, (err, doc) => {
-            if (err) {
-                console.log(err)
-            }
-            console.log(doc)
-            return;
         })
     },
     updateBalance: (organisationID, sum) => {
