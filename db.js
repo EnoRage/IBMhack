@@ -18,16 +18,28 @@ const options = {
 const db = mongoose.connect(app.DB_URL, options).then(console.log('Mongo DB works fine'));
 
 var vote = {
-    create: (description) => {
-        Vote.create({
-            description: description
-        }, (err, doc) => {
-            if (err) {
-                console.log(err);
+    create: (organisationID, description, endTime) => {
+        Vote.find({}, {sort: -1}, (err,doc) => {
+            var voteID;
+            if (doc.length != 0) {
+                voteID = Number(doc[0].voteID) + 1;
+            } else {
+                voteID = 0;
             }
 
-            return;
-        })
+            Vote.create({
+                voteID: voteID,
+                organisationID: organisationID,
+                description: description,
+                endTime: endTime
+            }, (err, doc) => {
+                if (err) {
+                    console.log(err);
+                }
+    
+                return;
+            })
+        }).limit(1);
     },
     findOne: (organisation_id, callback) => {
         Vote.find({

@@ -6,6 +6,8 @@ const Server = require("./server.js"),
     Dialogs = require('./dialogs.js'),
     Key = require('./buttons.js');
 
+var org_object;
+var organisation;
 
 var bot = new builder.UniversalBot(Server.connector, [
     (session) => {
@@ -54,16 +56,52 @@ bot.dialog("investor", [
     matches: Key.buttons.regular_expression.btn_investor
 });
 
+bot.dialog("balance", [
+    (session, args, next) => {
+        db.user.balance(session.message.user.id, (balance) => {
+            session.send('Ваш баланс: ' + balance + " у.е.");
+        })
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_balance
+});
+
 bot.dialog("create_vote", [
     (session, args, next) => {
-        session.send('Создать голосование');
+        db.organisation.findAll((organisations) => {
+            org_object = organisations;
+            var organisationNames = [];
+            for (let i in organisations) {
+                organisationNames.push(organisations[i].name);
+            }
+            builder.Prompts.choice(session, "Выберите организацию, в которую хотите пожертвовать", organisationNames, {
+                listStyle: builder.ListStyle.button
+            });
+        });
+    },
+    (session, results, next) => {
+        for (let i in org_object) {
+            if (org_object[i].name == results.response.entity) {
+                organisation = org_object[i];
+            }
+        }
+        
+        builder.Prompts.text(session, "Введите описание голосования");
+    },
+    (session, results, next) => {
+        session.userData.description = results.responsel
+        builder.Prompts.time(session, "Введите дату окончания голосования");
+    },
+    (session, results, next) => {
+        let endDate = new Date(results.response)
+        db.vote.create(organisation.organisationID, session.userData.description, endDate);
+        session.send('Голосование успешно создано');
+        next();
     }
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_create_vote
 });
 
-var org_object;
-var organisation;
 bot.dialog("sacrifice", [
     (session, args, next) => {
         db.organisation.findAll((organisations) => {
@@ -78,27 +116,27 @@ bot.dialog("sacrifice", [
         });
     },
     (session, results) => {
-        
+
         for (let i in org_object) {
             if (org_object[i].name == results.response.entity) {
                 organisation = org_object[i];
             }
         }
 
-        let msg = '**Вы выбрали:** '+organisation.name+'\n\n\0\n\n'+
-        '**Страна:** '+organisation.country+'\n\n'+
-        '**Состояние**:'+organisation.capital+'\n\n'+
-        '**Цель:**'+organisation.mission;
+        let msg = '**Вы выбрали:** ' + organisation.name + '\n\n\0\n\n' +
+            '**Страна:** ' + organisation.country + '\n\n' +
+            '**Состояние** :' + organisation.capital + '\n\n' +
+            '**Цель:** ' + organisation.mission;
         session.send(msg);
         db.user.balance(session.message.user.id, (balance) => {
-            builder.Prompts.text(session, "Вам **доступно** "+balance+" у.е.\n\n\0\n\nВведите сумму пожертвования");
+            builder.Prompts.text(session, "Вам **доступно** " + balance + " у.е.\n\n\0\n\nВведите сумму пожертвования");
         });
     },
     (session, results, next) => {
         db.user.addOrganisation(session.message.user.id, organisation.organisationID, results.response);
         db.user.updateBalance(session.message.user.id, results.response);
         db.organisation.updateBalance(organisation.organisationID, results.response);
-        session.send('Вы успешно пожертвовали '+results.response+ ' у.е.');
+        session.send('Вы успешно пожертвовали ' + results.response + ' у.е.');
         next();
     }
 ]).triggerAction({

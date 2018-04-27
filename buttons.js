@@ -6,7 +6,8 @@ const buttons = {
         btn_back: /❌  Назад/i,
         btn_create_vote: /Создать голосование/i,
         btn_sacrifice: /Пожертвовать/i,
-        btn_vote: /Проголосвать/i
+        btn_vote: /Проголосвать/i,
+        btn_balance: /Баланс/i
     },
     normal_buttons: {
         btn_organisation: 'Организация',
@@ -14,7 +15,8 @@ const buttons = {
         btn_back: '❌  Назад',
         btn_create_vote: 'Создать голосование',
         btn_sacrifice: 'Пожертвовать',
-        btn_vote: 'Проголосвать'
+        btn_vote: 'Проголосвать',
+        btn_balance: 'Баланс'
     }
 }
 
@@ -41,6 +43,9 @@ const keyboards = {
     ],
 
     investor: [
+        [{
+            text: buttons.normal_buttons.btn_balance
+        }],
         [{
             text: buttons.normal_buttons.btn_sacrifice
         }, {
