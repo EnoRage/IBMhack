@@ -1,6 +1,6 @@
 const mongoose = require("mongoose"),
     app = require('./appID.js'),
-Vote = require('./schemas/voteSchema.js'),
+    Vote = require('./schemas/voteSchema.js'),
     Voter = require('./schemas/voterSchema.js'),
     User = require('./schemas/userSchema.js'),
     Organisation = require('./schemas/oraganisationSchema.js'),
@@ -19,10 +19,14 @@ const db = mongoose.connect(app.DB_URL, options).then(console.log('Mongo DB work
 
 var vote = {
     create: (organisationID, description, sum, endTime) => {
-        Vote.find({}, {},{sort: {voteID: -1}}, (err,doc) => {
+        Vote.find({}, {}, {
+            sort: {
+                voteID: -1
+            }
+        }, (err, doc) => {
             var voteID;
             if (doc.length != 0) {
-                voteID = Number(doc.voteID) + Number(1);
+                voteID = Number(doc[0].voteID) + Number(1);
             } else {
                 voteID = 0;
             }
@@ -37,7 +41,7 @@ var vote = {
                 if (err) {
                     console.log(err);
                 }
-    
+
                 return;
             })
         }).limit(1);
@@ -147,7 +151,9 @@ var user = {
         })
     },
     balance: (userID, callback) => {
-        User.find({userID: userID}, (err, doc) => {
+        User.find({
+            userID: userID
+        }, (err, doc) => {
             if (err) {
                 console.log(err);
                 return;
@@ -161,7 +167,10 @@ var user = {
             userID: userID
         }, (err, res) => {
             let organisations = res[0].organisations.slice();
-            organisations.push({organisationID: organisationID, sum: Number(sum)});
+            organisations.push({
+                organisationID: organisationID,
+                sum: Number(sum)
+            });
             User.update({
                 userID: userID
             }, {
@@ -176,8 +185,14 @@ var user = {
         })
     },
     updateBalance: (userID, sum) => {
-        User.find({userID: userID}, (err, doc) => {
-            User.update({userID: userID}, {balance: doc[0].balance - Number(sum)}, (err, res) => {
+        User.find({
+            userID: userID
+        }, (err, doc) => {
+            User.update({
+                userID: userID
+            }, {
+                balance: doc[0].balance - Number(sum)
+            }, (err, res) => {
                 if (err) {
                     console.log(err);
                 }
@@ -229,8 +244,14 @@ var organisation = {
         })
     },
     updateBalance: (organisationID, sum) => {
-        Organisation.find({organisationID: Number(organisationID)}, (err, doc) => {
-            Organisation.update({organisationID: Number(organisationID)}, {balance: doc[0].balance + Number(sum)}, (err, res) => {
+        Organisation.find({
+            organisationID: Number(organisationID)
+        }, (err, doc) => {
+            Organisation.update({
+                organisationID: Number(organisationID)
+            }, {
+                balance: doc[0].balance + Number(sum)
+            }, (err, res) => {
                 if (err) {
                     console.log(err);
                 }
