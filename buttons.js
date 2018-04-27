@@ -30,9 +30,6 @@ const keyboards = {
         }],
         [{
             text: buttons.normal_buttons.btn_investor
-        }],
-        [{
-            text: buttons.normal_buttons.btn_back
         }]
     ],
 
