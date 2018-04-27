@@ -102,7 +102,13 @@ bot.dialog('back', [
             var newDialogArr = dialogArr.slice(0, dialogArr.length - 1);
 
             session.userData.dialog = newDialogArr;
-            session.beginDialog(dialogArr[dialogArr.length - 1]);
+            
+
+            if (dialogArr.length - 1 < 0) {
+                session.beginDialog('start');
+            } else {
+                session.beginDialog(dialogArr[dialogArr.length - 1]);
+            }
 
         } else {
             session.beginDialog('start');
