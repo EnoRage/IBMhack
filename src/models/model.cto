@@ -1,0 +1,50 @@
+
+namespace rusom.model
+
+asset Proposal identified by proposalId {
+  o String proposalId
+  o String description
+  o String voteFinalRes
+  o String[] VoteRes
+  o Double quantity
+  --> Organisation owner
+}
+
+participant Investor identified by investId {
+  o String investId
+  o String firstName
+  o String lastName
+  o Double balance
+}
+participant Organisation identified by orgId {
+  o String orgId
+  o String name
+  o Double balance
+}
+
+participant Provider identified by providerId {
+  o String providerId
+  o String name
+  o Double balance
+}
+
+
+transaction MakeProposal {
+  o Double quantity
+  o String description
+  --> Organisation Proposal
+}
+
+transaction voteForProposal {
+  o String voteRes
+  o String investorAddress
+  o String proposalId
+  --> Investor Proposal
+}
+
+transaction invest {
+  o String orgId
+  o String sum
+  --> Organisation Organisation
+  --> Investor Investor
+}

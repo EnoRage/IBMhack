@@ -1,0 +1,206 @@
+/**
+ * Sample access control list.
+ */
+
+rule SystemACL {
+  description:  "System ACL to permit all access"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
+rule NetworkAdminUser {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "**"
+    action: ALLOW
+}
+
+rule NetworkAdminSystem {
+    description: "Grant business network administrators full access to system resources"
+    participant: "org.hyperledger.composer.system.NetworkAdmin"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+
+rule LedgerAccess {
+  description:  "Access to ledger"
+  participant: "org.sample.**"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+
+rule InvestorAccessToTokem {
+  description: "Investor access"
+  participant(p): "org.sample.Investor"
+  operation: READ
+  resource(r): "org.sample.Token"
+  condition: (p.getIdentifier() == r.holder.getIdentifier() || r.movementStatus == 'IN_TRANSIT')
+  action: ALLOW
+}
+
+rule InvestorAccessToAllTokens {
+  description: "Investor access"
+  participant(p): "org.sample.Investor"
+  operation: READ
+  resource(r): "org.sample.Token"
+  condition: (r.movementStatus == 'IN_TRANSIT')
+  action: ALLOW
+}
+
+rule InvestorAccessToAllOrgs {
+  description: "Investor access"
+  participant(p): "org.sample.Investor"
+  operation: READ
+  resource(r): "org.sample.Organisation"
+  condition: (true)
+  action: ALLOW
+}
+
+rule InvestorAccessToHimsemf {
+  description: "Investor access to himself"
+  participant(p): "org.sample.Investor"
+  operation: READ
+  resource(r): "org.sample.Investor"
+  condition: (p.getIdentifier() == r.getIdentifier())
+  action: ALLOW
+}
+
+rule OrganisationAccessToHimsemf {
+  description: "Investor access to himself"
+  participant(p): "org.sample.Organisation"
+  operation: READ
+  resource(r): "org.sample.Organisation"
+  condition: (p.getIdentifier() == r.getIdentifier())
+  action: ALLOW
+}
+
+rule OrganisationAccessToAllInvestors {
+  description: "Allow access to holders"
+  participant(p): "org.sample.Organisation"
+  operation: READ
+  resource(r): "org.sample.Investor"
+  condition: (true)
+  action: ALLOW
+}
+
+rule OrganisationSubmitProposeTrade {
+  description: "Let Organisation depart tokens"
+  participant: "org.sample.Organisation"
+  operation: CREATE, READ
+  resource: "org.sample.ProposeTrade"
+  action: ALLOW
+}
+
+
+rule UpdateTokensWithTransactionProposeTrade {
+  description: "Update tokens with transactions"
+  participant(p): "org.sample.Investor"
+  operation: READ, UPDATE
+  resource(r): "org.sample.Token"
+  transaction(tx): "org.sample.ProposeTrade"
+  condition: (p.getIdentifier() == r.absoluteOwner.getIdentifier() && r.movementStatus == 'IN_FIELD')
+  action: ALLOW
+}
+
+rule InvestorSubmitAcceptTrade {
+  description: "Let investor accept tokens"
+  participant: "org.sample.Investor"
+  operation: CREATE, READ
+  resource: "org.sample.AcceptTrade"
+  action: ALLOW
+}
+
+rule OrganisationAceessToOwnTokens {
+  description: "Let org accept find himself's tokens"
+  participant: "org.sample.Organisation"
+  operation: CREATE, READ, UPDATE
+  resource: "org.sample.Token"
+  action: ALLOW
+}
+
+rule InvestorsAceessToProposal {
+  description: "Let org accept find himself's tokens"
+  participant: "org.sample.Investor"
+  operation: READ, UPDATE
+  resource: "org.sample.Proposal"
+  action: ALLOW
+}
+
+rule OrganisationAceessToOwnProposal {
+  description: "Let org accept find himself's propsal"
+  participant: "org.sample.Organisation"
+  operation: CREATE, READ, UPDATE
+  resource: "org.sample.Proposal"
+  action: ALLOW
+}
+
+
+rule tyyy {
+  description: "Let org accept find himself's propsal"
+  participant: "org.sample.Organisation"
+  operation: CREATE, READ, UPDATE
+  resource: "org.sample.Proposal"
+  action: ALLOW
+}
+
+rule OrgUpdateOnlyItsTokens {
+  description: "Allow changing owner when accepting the trade"
+  participant(p): "org.sample.Organisation"
+  operation: READ, UPDATE, CREATE
+  resource(r): "org.sample.Token"
+  transaction(tx): "org.sample.ProposeTrade"
+  condition: (p.getIdentifier() != r.absoluteOwner.getIdentifier())
+  action: ALLOW
+}
+
+rule UpdateTokensWithTransactionAcceptTrade {
+  description: "Allow changing owner when accepting the trade"
+  participant(p): "org.sample.Investor"
+  operation: READ, UPDATE
+  resource(r): "org.sample.Token"
+  transaction(tx): "org.sample.AcceptTrade"
+  condition: (r.movementStatus == 'IN_TRANSIT')
+  action: ALLOW
+}
+
+rule UpdateBalanceOrganistion {
+  description: "Allow changing owner when accepting the trade"
+  participant(p): "org.sample.Investor"
+  operation: READ, UPDATE
+  resource(r): "org.sample.Organisation"
+  transaction(tx): "org.sample.AcceptTrade"
+  condition: (true)
+  action: ALLOW
+}
+
+rule UpdateInvestorWithTransactionAcceptTrade {
+  description: "Allow to change balance when accepting the trade"
+  participant: "org.sample.Investor"
+  operation: READ, UPDATE
+  resource: "org.sample.Investor"
+  transaction: "org.sample.AcceptTrade"
+  action: ALLOW
+}
+//potom
+rule InvestorSubmitCancelTrade {
+  description: "Allow cancelling the trade"
+  participant: "org.sample.Investor"
+  operation: CREATE, READ
+  resource: "org.sample.CancelTrade"
+  action: ALLOW
+}
+//potom
+rule UpdateTokensWithTransactionCancelTrade {
+  description: "Allow to change Token's status when cancelling the trade"
+  participant(p): "org.sample.Investor"
+  operation: READ, UPDATE
+  resource(r): "org.sample.Token"
+  transaction(tx): "org.sample.CancelTrade"
+  condition: (r.owner.getIdentifier() == p.getIdentifier() && r.movementStatus == 'IN_TRANSIT')
+  action: ALLOW
+}
