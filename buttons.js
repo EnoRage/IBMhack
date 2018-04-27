@@ -40,7 +40,7 @@ const keyboards = {
         [{
             text: buttons.normal_buttons.btn_add_organisation
         }, {
-            text: btn_create_vote
+            text: buttons.normal_buttons.btn_create_vote
         }]
     ],
 
