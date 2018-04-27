@@ -190,8 +190,8 @@ bot.dialog('statistica', [
                                 session.send('Ещё никто не проголосвал за одно из пожертвований');
                                 return;
                             }
-
                         });
+                        break;
                     }
                 }
             }
