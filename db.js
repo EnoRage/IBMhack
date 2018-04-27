@@ -22,13 +22,13 @@ var vote = {
         Vote.find({}, {sort: -1}, (err,doc) => {
             var voteID;
             if (doc.length != 0) {
-                voteID = Number(doc[0].voteID) + 1;
+                voteID = Number(doc[0].voteID) + Number(1);
             } else {
                 voteID = 0;
             }
 
             Vote.create({
-                voteID: voteID,
+                voteID: Number(voteID),
                 organisationID: organisationID,
                 description: description,
                 sum: sum,

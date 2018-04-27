@@ -113,28 +113,32 @@ bot.dialog("vote", [
     (session, args, next) => {
         db.organisation.findAll((organisations) => {
             db.user.find(session.message.user.id, (user) => {
-                session.userData.userOrganisations = user[0].organisations;
-                var counter = 0;
-                org_object = organisations;
-                var organisationNames = [];
-                for (let i in organisations) {
-                    for (let j in session.userData.userOrganisations) {
-                        if (organisations[i].organisationID == session.userData.userOrganisations[j].organisationID) {
-                            counter++;
-                            organisationNames.push(organisations[i].name);
-                            break;
+                if (user.length != 0) {
+                    session.userData.userOrganisations = user[0].organisations;
+                    var counter = 0;
+                    org_object = organisations;
+                    var organisationNames = [];
+                    for (let i in organisations) {
+                        for (let j in session.userData.userOrganisations) {
+                            if (organisations[i].organisationID == session.userData.userOrganisations[j].organisationID) {
+                                counter++;
+                                organisationNames.push(organisations[i].name);
+                                break;
+                            }
                         }
                     }
-                }
-
-                if (counter != 0) {
-                    builder.Prompts.choice(session, "Чтобы посмотреть активные голосования - выберите организацию", organisationNames, {
-                        listStyle: builder.ListStyle.button
-                    });
+    
+                    if (counter != 0) {
+                        builder.Prompts.choice(session, "Чтобы посмотреть активные голосования - выберите организацию", organisationNames, {
+                            listStyle: builder.ListStyle.button
+                        });
+                    } else {
+                        session.send('Вы ещё не пожертвовали ни в одну организацию');
+                        return;
+                    }
                 } else {
-                    session.send('Вы ещё не пожертвовали ни в одну организацию');
-                    return;
-                }
+                    session.send('Ещё не было создано ни одного голосования.')
+                }              
             });
         });
     },
