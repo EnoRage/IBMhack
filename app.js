@@ -57,7 +57,7 @@ bot.dialog("create_vote", [
 
 bot.dialog("sacrifice", [
     (session, args, next) => {
-        session.send('Пожертовать');
+        builder.Prompts.choice(session, "Choose organisation", ["1","2","3"])
     }
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_sacrifice
