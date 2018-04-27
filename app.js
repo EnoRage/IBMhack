@@ -25,6 +25,7 @@ bot.dialog("start", [
 
 bot.dialog("organisation", [
     (session, args, next) => {
+        let msg = "Тут весь контроль организации";
         Menu.makeMenu(session, session.message.user.id, msg, Key.keyboards.organisation, 'organisation', false, (msg_id) => {
             // Тут пиши тело функции
             next();
@@ -36,6 +37,7 @@ bot.dialog("organisation", [
 
 bot.dialog("investor", [
     (session, args, next) => {
+        let msg = "Тут весь контроль инвестора (простого смертного)";
         Menu.makeMenu(session, session.message.user.id, msg, Key.keyboards.investor, 'investor', false, (msg_id) => {
             // Тут пиши тело функции
             next();
