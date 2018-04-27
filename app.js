@@ -145,6 +145,69 @@ bot.dialog("vote", [
             }
         }
 
+        builder.Prompts.choice(session, "Вы можете посмотреть статистику по голосованию или проголосвать", "Статистика|Проголосовать")
+    },
+    (session, results, next) => {
+        switch (results.response.index) {
+            case 0:
+                session.beginDialog('statistica');
+                break;
+            case 1:
+                session.beginDialog('doVote');
+                break;
+        }
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_vote
+});
+
+bot.dialog('statistica', [
+    (session, args, next) => {
+        var counter = 0;
+        db.vote.findAll((votes) => {
+            for (let i in votes) {
+                for (let j in session.userData.userOrganisations) {
+                    if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID) {
+                        counter++;
+                        db.voter.findVotersByVoteID(votes[i].voteID, (voters) => {
+                            var yes = 0;
+                            var no = 0;
+
+                            if (voters.length != 0) {
+                                for (let i in voters) {
+                                    if (voters[i].vote == 1) {
+                                        yes++;
+                                    } else {
+                                        no++;
+                                    }
+
+                                    let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\n\0\n\nСтатистака: \n\nЗа: ${yes} человек\n\nПротив: ${no} человек. Если вы ещё не голосовали - можете проголосовать`;
+                                    let card = Card.voteCard(session, msg, votes[i].voteID);
+                                    var text = new builder.Message(session).addAttachment(card);
+                                    session.send(text);
+                                }
+                            } else {
+                                session.send('Ещё никто не проголосвал за одно из пожертвований');
+                                return;
+                            }
+
+                        });
+                    }
+                }
+            }
+
+            if (counter == 0) {
+                session.send('Организация ещё не проводила голосования');
+                return;
+            }
+        })
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_statistica
+});
+
+bot.dialog('doVote', [
+    (session, args, next) => {
         var counter = 0;
         db.vote.findAll((votes) => {
             for (let i in votes) {
@@ -166,7 +229,7 @@ bot.dialog("vote", [
         })
     }
 ]).triggerAction({
-    matches: Key.buttons.regular_expression.btn_vote
+    matches: Key.buttons.regular_expression.btn_doVote
 });
 
 bot.dialog("sacrifice", [
@@ -214,7 +277,7 @@ bot.dialog('accept_vote', [
     (session, args, next) => {
         var voteID = session.message.text.substring(6);
         var vote = session.message.text.substr(5, 1);
-        
+
         db.voter.findVotersByVoteIDAndUserID(voteID, session.message.user.id, (voter) => {
             if (voter.length == 0) {
                 var voteText;
@@ -223,12 +286,12 @@ bot.dialog('accept_vote', [
                 } else {
                     voteText = 'Против';
                 }
-        
+
                 db.voter.doVote(Number(voteID), session.message.user.id, Number(vote));
                 session.send(`Вы проголосовали ${voteText}`);
                 return;
             } else {
-                session.send('Вы уже проголосовали.')
+                session.send('Вы уже голосовали.')
             }
         })
     }

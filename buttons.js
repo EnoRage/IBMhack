@@ -7,7 +7,9 @@ const buttons = {
         btn_create_vote: /Создать голосование/i,
         btn_sacrifice: /Пожертвовать/i,
         btn_vote: /Проголосвать/i,
-        btn_balance: /Баланс/i
+        btn_balance: /Баланс/i,
+        btn_doVote: /Проголосовать/i,
+        btn_statistica: /Статистика/i
     },
     normal_buttons: {
         btn_organisation: 'Организация',
@@ -16,7 +18,9 @@ const buttons = {
         btn_create_vote: 'Создать голосование',
         btn_sacrifice: 'Пожертвовать',
         btn_vote: 'Проголосвать',
-        btn_balance: 'Баланс'
+        btn_balance: 'Баланс',
+        btn_doVote: 'Проголосовать',
+        btn_statistica: 'Статистика'
     }
 }
 
