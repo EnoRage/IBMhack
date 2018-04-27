@@ -24,23 +24,29 @@ bot.dialog("start", [
 ]);
 
 bot.dialog("organisation", [
-    (session, args) => {
-        session.send('Организация');
+    (session, args, next) => {
+        Menu.makeMenu(session, session.message.user.id, msg, Key.keyboards.organisation, 'organisation', false, (msg_id) => {
+            // Тут пиши тело функции
+            next();
+        });
     }
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_organisation
 });
 
 bot.dialog("investor", [
-    (session, args) => {
-        session.send('Инвестор');
+    (session, args, next) => {
+        Menu.makeMenu(session, session.message.user.id, msg, Key.keyboards.investor, 'investor', false, (msg_id) => {
+            // Тут пиши тело функции
+            next();
+        });
     }
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_investor
 });
 
 bot.dialog("add_organisation", [
-    (session, args) => {
+    (session, args, next) => {
         session.send('Добавить орагнизацию');
     }
 ]).triggerAction({
@@ -48,7 +54,7 @@ bot.dialog("add_organisation", [
 });
 
 bot.dialog("create_vote", [
-    (session, args) => {
+    (session, args, next) => {
         session.send('Создать голосование');
     }
 ]).triggerAction({
@@ -56,7 +62,7 @@ bot.dialog("create_vote", [
 });
 
 bot.dialog("sacrifice", [
-    (session, args) => {
+    (session, args, next) => {
         session.send('Пожертовать');
     }
 ]).triggerAction({
@@ -64,7 +70,7 @@ bot.dialog("sacrifice", [
 });
 
 bot.dialog("vote", [
-    (session, args) => {
+    (session, args, next) => {
         session.send('Проголосвать');
     }
 ]).triggerAction({
