@@ -3,7 +3,7 @@ const Menu = require('./replaceMenu.js');
 function changeDialogsChain (session, thisDialog) {
     if (session.userData.dialog === undefined) {
         console.log('Попал в ИФ');
-        session.userData.dialog = ['SecondMenu']; // Стартовый диалог
+        session.userData.dialog = ['start']; // Стартовый диалог
         session.userData.lastDialog = undefined;
     }
 
