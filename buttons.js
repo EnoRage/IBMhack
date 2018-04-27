@@ -1,13 +1,13 @@
 // Кнопки
 const buttons = {
     regular_expression: {
-        btn_organisation: '/Организация/i',
-        btn_investor: '/Инвестор/i',
-        btn_back: '/❌  Назад/i',
-        btn_add_organisation: '/Добавить организацию/i',
-        btn_create_vote: '/Создать голосование/i',
-        btn_sacrifice: '/Пожертвовать/i',
-        btn_vote: '/Проголосвать/i'
+        btn_organisation: /Организация/i,
+        btn_investor: /Инвестор/i,
+        btn_back: /❌  Назад/i,
+        btn_add_organisation: /Добавить организацию/i,
+        btn_create_vote: /Создать голосование/i,
+        btn_sacrifice: /Пожертвовать/i,
+        btn_vote: /Проголосвать/i
     },
     normal_buttons: {
         btn_organisation: 'Организация',
