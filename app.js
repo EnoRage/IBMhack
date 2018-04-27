@@ -10,8 +10,6 @@ var bot = new builder.UniversalBot(Server.connector, [
     }
 ]).set('storage', Server.memory.inMemoryStorage);
 
-bot.recognizer(Server.recognizer);
-
 bot.dialog("start", [
     (session, args, next) => {
         console.log('Works fine');

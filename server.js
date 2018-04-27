@@ -19,4 +19,3 @@ server.post('/api/messages', connector.listen());
 module.exports.server = server;
 module.exports.connector = connector;
 module.exports.memory = inMemoryStorage;
-module.exports.recognizer = recognizer;
