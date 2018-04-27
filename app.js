@@ -15,11 +15,18 @@ var bot = new builder.UniversalBot(Server.connector, [
 
 bot.dialog("start", [
     (session, args, next) => {
-        let msg = "Главное меню";
-        Menu.makeMenu(session, session.message.user.id, msg, Key.keyboards.mainMenu, 'start', false, (msg_id) => {
-            // Тут пиши тело функции
-            next();
-        });
+        db.user.find(session.message.user.id, (user) => {
+            if (user.length != 0) {
+                let msg = "Главное меню";
+                Menu.makeMenu(session, session.message.user.id, msg, Key.keyboards.mainMenu, 'start', false, (msg_id) => {
+                    // Тут пиши тело функции
+                    next();
+                });
+            } else {
+                db.user.create(session.message.user.id, session.message.user.name);
+                session.beginDialog('start');
+            }
+        })
     }
 ]);
 

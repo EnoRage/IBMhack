@@ -117,7 +117,7 @@ var user = {
                 return;
             }
 
-            callback(doc[0]);
+            callback(doc);
         })
     },
     balance: (userID, callback) => {
