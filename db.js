@@ -19,8 +19,7 @@ const db = mongoose.connect(app.DB_URL, options).then(console.log('Mongo DB work
 
 var vote = {
     create: (organisationID, description, sum, endTime) => {
-        Vote.find({}, {sort: -1}, (err,doc) => {
-            console.log(doc)
+        Vote.find({}, {},{sort: -1}, (err,doc) => {
             var voteID;
             if (doc.length != 0) {
                 voteID = Number(doc.voteID) + Number(1);
