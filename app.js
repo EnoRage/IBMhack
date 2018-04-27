@@ -98,7 +98,7 @@ bot.dialog("create_vote", [
         session.userData.sum = results.response;
         builder.Prompts.time(session, "Введите дату окончания голосования");
     },
-    (session, results, next) => { 
+    (session, results, next) => {
         let endDate = new Date(builder.EntityRecognizer.resolveTime([results.response])).getTime();
         db.vote.create(organisation.organisationID, session.userData.description, session.userData.sum, endDate);
         session.send('Голосование успешно создано');
@@ -108,19 +108,34 @@ bot.dialog("create_vote", [
     matches: Key.buttons.regular_expression.btn_create_vote
 });
 
+
 bot.dialog("vote", [
     (session, args, next) => {
-        db.user.find(session.message.user.id, (user) => {
-            session.userData.userOrganisations = user[0].organisations;
-        });
         db.organisation.findAll((organisations) => {
-            org_object = organisations;
-            var organisationNames = [];
-            for (let i in organisations) {
-                organisationNames.push(organisations[i].name);
-            }
-            builder.Prompts.choice(session, "Чтобы посмотреть активные голосования - выберите организацию", organisationNames, {
-                listStyle: builder.ListStyle.button
+            db.user.find(session.message.user.id, (user) => {
+                session.userData.userOrganisations = user[0].organisations;
+
+                var counter = 0;
+                org_object = [];
+                var organisationNames = [];
+                for (let i in organisations) {
+                    for (let j in session.userData.userOrganisations) {
+                        if (organisations[i].organisationID == session.userData.userOrganisations[j].organisationID) {
+                            counter++;
+                            organisationNames.push(organisations[i].name);
+                            return;
+                        }
+                    }
+                }
+
+                if (counter != 0) {
+                    builder.Prompts.choice(session, "Чтобы посмотреть активные голосования - выберите организацию", organisationNames, {
+                        listStyle: builder.ListStyle.button
+                    });
+                } else {
+                    session.send('Вы ещё не пожертвовали ни в одну организацию');
+                    return;
+                }
             });
         });
     },
@@ -131,16 +146,23 @@ bot.dialog("vote", [
             }
         }
 
+        var counter = 0;
         db.vote.findAll((votes) => {
             for (let i in votes) {
-                for (let j in session.userData.userOrganisations){
+                for (let j in session.userData.userOrganisations) {
                     if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID) {
-                        let msg = 'Организация: **'+organisation.name + '** планирует собрать **' +votes[i].sum + ' у.е.**, чтобы **' + votes[i].description + '**\n\n\0\n\nВы одобряете?';
+                        counter++;
+                        let msg = 'Организация: ' + '**' + organisation.name + '**' + 'планирует собрать **' + votes[i].sum + ' у.е.**, ' + '+чтобы **' + votes[i].description + '**\n\n\0\n\nВы одобряете?';
                         let card = Card.voteCard(session, msg, votes[i].voteID);
                         var text = new builder.Message(session).addAttachment(card);
                         session.send(text);
                     }
                 }
+            }
+
+            if (counter == 0) {
+                session.send('Организация ещё не проводила голосования');
+                return;
             }
         })
     }
