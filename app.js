@@ -74,7 +74,7 @@ bot.dialog("create_vote", [
             for (let i in organisations) {
                 organisationNames.push(organisations[i].name);
             }
-            builder.Prompts.choice(session, "Выберите организацию, в которую хотите пожертвовать", organisationNames, {
+            builder.Prompts.choice(session, "Организация, которая создаёт голосование", organisationNames, {
                 listStyle: builder.ListStyle.button
             });
         });
@@ -93,7 +93,7 @@ bot.dialog("create_vote", [
         builder.Prompts.time(session, "Введите дату окончания голосования");
     },
     (session, results, next) => {
-        let endDate = new Date(results.response)
+        let endDate = new Date(results.response).getTime();
         db.vote.create(organisation.organisationID, session.userData.description, endDate);
         session.send('Голосование успешно создано');
         next();
