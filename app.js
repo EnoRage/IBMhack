@@ -63,14 +63,6 @@ bot.dialog("sacrifice", [
     matches: Key.buttons.regular_expression.btn_sacrifice
 });
 
-bot.dialog("create_vote", [
-    (session, args) => {
-        session.send('Создать голосование');
-    }
-]).triggerAction({
-    matches: Key.buttons.regular_expression.btn_create_vote
-});
-
 bot.dialog("vote", [
     (session, args) => {
         session.send('Проголосвать');
