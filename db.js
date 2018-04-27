@@ -120,18 +120,38 @@ var user = {
             callback(doc[0]);
         })
     },
-    addOrganisation: (userID, organisationID) => {
+    balance: (userID, callback) => {
+        User.find({userID: userID}, (err, doc) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            callback(doc[0].balance);
+        })
+    },
+    addOrganisation: (userID, organisationID, sum) => {
         User.find({
             userID: userID
         }, (err, res) => {
-            let organisationsID = res[0].organisationID.slice();
-            organisationsID.push(organisationID);
-            console.log(organisationsID)
+            let organisations = res[0].organisations.slice();
+            organisations.push({organisationID: organisationID, sum: Number(sum)});
             User.update({
                 userID: userID
             }, {
-                organisationID: organisationsID
+                organisations: organisations
             }, (err, res) => {
+                if (err) {
+                    console.log(err);
+                }
+
+                return;
+            })
+        })
+    },
+    updateBalance: (userID, sum) => {
+        User.find({userID: userID}, (err, doc) => {
+            User.update({userID: userID}, {balance: doc[0].balance - Number(sum)}, (err, res) => {
                 if (err) {
                     console.log(err);
                 }
@@ -155,7 +175,7 @@ var organisation = {
     },
     findOne: (organisationID, callback) => {
         Organisation.find({
-            organisationID: organisationID
+            organisationID: Number(organisationID)
         }, (err, doc) => {
             if (err) {
                 console.log(err);
@@ -167,19 +187,30 @@ var organisation = {
     },
     create: (organisationID, name, foundateDate, capital, country, mission, balance) => {
         Organisation.create({
-            organisationID: organisationID,
+            organisationID: Number(organisationID),
             name: name,
             foundateDate: foundateDate,
-            capital: capital,
+            capital: Number(capital),
             country: country,
             mission: mission,
-            balance: balance
+            balance: Number(balance)
         }, (err, doc) => {
             if (err) {
                 console.log(err)
             }
             console.log(doc)
             return;
+        })
+    },
+    updateBalance: (organisationID, sum) => {
+        Organisation.find({organisationID: Number(organisationID)}, (err, doc) => {
+            Organisation.update({organisationID: Number(organisationID)}, {balance: doc[0].balance + Number(sum)}, (err, res) => {
+                if (err) {
+                    console.log(err);
+                }
+
+                return;
+            })
         })
     }
 }

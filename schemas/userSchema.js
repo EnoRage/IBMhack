@@ -20,9 +20,10 @@ var user = new Schema({
         }
     },
     balance: {
-        type: String
+        type: String,
+        default: 10000
     },
-    organisationID: [{type: String}]
+    organisations: [{type: String}]
 }, {
     versionKey: false
 });

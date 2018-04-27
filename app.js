@@ -56,6 +56,7 @@ bot.dialog("create_vote", [
 });
 
 var org_object;
+var organisation;
 bot.dialog("sacrifice", [
     (session, args, next) => {
         db.organisation.findAll((organisations) => {
@@ -64,19 +65,34 @@ bot.dialog("sacrifice", [
             for (let i in organisations) {
                 organisationNames.push(organisations[i].name);
             }
-            builder.Prompts.choice(session, "Choose organisation", organisationNames, {
+            builder.Prompts.choice(session, "Выберите организацию, в которую хотите пожертвовать", organisationNames, {
                 listStyle: builder.ListStyle.button
             });
         });
     },
     (session, results) => {
-        var organisation;
+        
         for (let i in org_object) {
             if (org_object[i].name == results.response.entity) {
                 organisation = org_object[i];
             }
         }
-        session.send(organisation.name)
+
+        let msg = '**Вы выбрали:** '+organisation.name+'\n\n\0\n\n'+
+        '**Страна:** '+organisation.country+'\n\n'+
+        '**Состояние**:'+organisation.capital+'\n\n'+
+        '**Цель:**'+organisation.mission;
+        session.send(msg);
+        db.user.balance(session.message.user.id, (balance) => {
+            builder.Prompts.text(session, "Вам **доступно** "+balance+" у.е.\n\n\0\n\nВведите сумму пожертвования");
+        });
+    },
+    (session, results, next) => {
+        db.user.addOrganisation(session.message.user.id, organisation.organisationID, results.response);
+        db.user.updateBalance(session.message.user.id, results.response);
+        db.organisation.updateBalance(session.message.user.id, results.response);
+        session.send('Вы успешно пожертвовали '+results.response+ ' у.е.');
+        next();
     }
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_sacrifice
