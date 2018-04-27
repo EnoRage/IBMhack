@@ -57,7 +57,13 @@ bot.dialog("create_vote", [
 
 bot.dialog("sacrifice", [
     (session, args, next) => {
-        builder.Prompts.choice(session, "Choose organisation", ["1","2","3"])
+        db.organisation.findAll((organisations) => {
+            var organisationNames = [];
+            for (let i in organisations) {
+                organisationNames.push(organisations[i].name);
+            }
+            builder.Prompts.choice(session, "Choose organisation", organisationNames);
+        });   
     }
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_sacrifice

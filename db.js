@@ -116,3 +116,31 @@ var user = {
         })      
     }
 }
+
+var organisation = {
+    findAll: (callback) => {
+        Organisation.find({}, (err, doc) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            
+            callback(doc);
+        })
+    },
+    findOne: (organisationID, callback) => {
+        Organisation.find({organisationID: organisationID}, (err, doc) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            
+            callback(doc[0]);
+        })
+    }
+}
+
+module.exports.vote = vote;
+module.exports.user = user;
+module.exports.voter = voter;
+module.exports.organisation = organisation;
