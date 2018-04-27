@@ -3,7 +3,7 @@ const mongoose = require('mongoose'),
 var Schema = mongoose.Schema;
 var user = new Schema({
     investorID: {
-        type: String
+        type: Number
     },
     userID: {
         type: String
@@ -20,10 +20,10 @@ var user = new Schema({
         }
     },
     balance: {
-        type: String,
+        type: Number,
         default: 10000
     },
-    organisations: [{type: Object}]
+    organisations: [{}]
 }, {
     versionKey: false
 });

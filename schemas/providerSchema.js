@@ -3,7 +3,7 @@ const mongoose = require('mongoose'),
 var Schema = mongoose.Schema;
 var provider = new Schema({
     providerID: {
-        type: String
+        type: Number
     },
     name: {
         type: String,
