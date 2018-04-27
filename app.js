@@ -8,7 +8,7 @@ var bot = new builder.UniversalBot(Server.connector, [
     function (session) {
         session.beginDialog('start');
     }
-]).set('storage', Server.memory.inMemoryStorage);
+]).set('storage', Server.memory);
 
 bot.dialog("start", [
     (session, args, next) => {
