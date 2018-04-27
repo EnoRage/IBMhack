@@ -2,8 +2,9 @@ const Server = require("./server.js"),
     db = require("./db.js"),
     builder = require('botbuilder'),
     rp = require('request-promise'),
-    Menu = require('./replaceMenu.js');
-Dialogs = require('./dialogs.js');
+    Menu = require('./replaceMenu.js'),
+    Dialogs = require('./dialogs.js'),
+    Key = require('./buttons.js');
 
 
 var bot = new builder.UniversalBot(Server.connector, [
@@ -15,7 +16,7 @@ var bot = new builder.UniversalBot(Server.connector, [
 bot.dialog("start", [
     (session, args, next) => {
         let msg = "Главное меню";
-        Menu.makeMenu(session, session.message.user.id, msg, Menu.mainMenu, 'start', false, (msg_id) => {
+        Menu.makeMenu(session, session.message.user.id, msg, Key.keyboards.mainMenu, 'start', false, (msg_id) => {
             // Тут пиши тело функции
             next();
         });
@@ -26,13 +27,57 @@ bot.dialog("organisation", [
     (session, args) => {
         session.send('Организация');
     }
-]);
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_organisation
+});
 
 bot.dialog("investor", [
     (session, args) => {
         session.send('Инвестор');
     }
-]);
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_investor
+});
+
+bot.dialog("add_organisation", [
+    (session, args) => {
+        session.send('Добавить орагнизацию');
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_add_organisation
+});
+
+bot.dialog("create_vote", [
+    (session, args) => {
+        session.send('Создать голосование');
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_create_vote
+});
+
+bot.dialog("sacrifice", [
+    (session, args) => {
+        session.send('Пожертовать');
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_sacrifice
+});
+
+bot.dialog("create_vote", [
+    (session, args) => {
+        session.send('Создать голосование');
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_create_vote
+});
+
+bot.dialog("vote", [
+    (session, args) => {
+        session.send('Проголосвать');
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_vote
+});
 
 bot.dialog('back', [
     (session, err) => {

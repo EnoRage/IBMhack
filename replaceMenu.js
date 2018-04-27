@@ -1,30 +1,11 @@
 const rp = require('request-promise'),
     Dialogs = require('./dialogs.js'),
     app = require('./appID.js');
-
-const telegramAPI = app.TELEGRAM_API;
-
-var mainMenu = [
-    [{
-        text: 'Организация'
-    }],
-    [{
-        text: "Инвестор"
-    }],
-    [
-        {text: "❌  Назад"}
-    ]
-];
-
-
-
-module.exports.mainMenu = mainMenu;
-
+    
 module.exports.makeMenu = (session, _userid, _text, _keyboard, _menu, isDeleteMessage, callback) => {
-    // if (_menu != session.userData.dialog[session.userData.dialog.length-1]) {
     var options = {
         method: 'POST',
-        uri: 'https://api.telegram.org/bot' + telegramAPI + '/sendMessage',
+        uri: 'https://api.telegram.org/bot' + app.TELEGRAM_API + '/sendMessage',
         body: {
             'chat_id': _userid,
             'text': _text,
@@ -59,7 +40,7 @@ module.exports.makeMenu = (session, _userid, _text, _keyboard, _menu, isDeleteMe
 module.exports.makeMessage = (session, _userid, _text, callback) => {
     var options = {
         method: 'POST',
-        uri: 'https://api.telegram.org/bot' + telegramAPI + '/sendMessage',
+        uri: 'https://api.telegram.org/bot' + app.TELEGRAM_API + '/sendMessage',
         body: {
             'chat_id': _userid,
             'text': _text,
@@ -76,7 +57,7 @@ module.exports.makeMessage = (session, _userid, _text, callback) => {
             callback(req.result.message_id);
         }
     });
-    rp.get('https://api.telegram.org/bot' + telegramAPI + '/getWebhookInfo', (err, res, req) => {
+    rp.get('https://api.telegram.org/bot' + app.TELEGRAM_API + '/getWebhookInfo', (err, res, req) => {
         // console.log(req);
     });
 }
@@ -84,7 +65,7 @@ module.exports.makeMessage = (session, _userid, _text, callback) => {
 module.exports.makeSimpleMessage = (_userid, _text) => {
     var options = {
         method: 'POST',
-        uri: 'https://api.telegram.org/bot' + telegramAPI + '/sendMessage',
+        uri: 'https://api.telegram.org/bot' + app.TELEGRAM_API + '/sendMessage',
         body: {
             'chat_id': _userid,
             'text': _text
@@ -100,7 +81,7 @@ module.exports.makeSimpleMessage = (_userid, _text) => {
 module.exports.replaceMenu = (_userid, _messageid) => {
     var options = {
         method: 'POST',
-        uri: 'https://api.telegram.org/bot' + telegramAPI + '/editMessageText',
+        uri: 'https://api.telegram.org/bot' + app.TELEGRAM_API + '/editMessageText',
         body: {
             'chat_id': _userid,
             'message_id': _messageid,
@@ -116,7 +97,7 @@ module.exports.replaceMenu = (_userid, _messageid) => {
 module.exports.replaceMenuMarkup = (_userid, _messageid, _markup) => {
     var options = {
         method: 'POST',
-        uri: 'https://api.telegram.org/bot' + telegramAPI + '/editMessageReplyMarkup',
+        uri: 'https://api.telegram.org/bot' + app.TELEGRAM_API + '/editMessageReplyMarkup',
         body: {
             'chat_id': _userid,
             'message_id': _messageid,
@@ -134,7 +115,7 @@ module.exports.replaceMenuMarkup = (_userid, _messageid, _markup) => {
 module.exports.replaceMenuCaption = (_userid, _messageid) => {
     var options = {
         method: 'POST',
-        uri: 'https://api.telegram.org/bot' + telegramAPI + '/editMessageCaption',
+        uri: 'https://api.telegram.org/bot' + app.TELEGRAM_API + '/editMessageCaption',
         body: {
             'chat_id': _userid,
             'message_id': _messageid,
@@ -152,7 +133,7 @@ module.exports.replaceMenuCaption = (_userid, _messageid) => {
 module.exports.deleteLastMessage = (_userid, _messageid) => {
     var options = {
         method: 'POST',
-        uri: 'https://api.telegram.org/bot' + telegramAPI + '/deleteMessage',
+        uri: 'https://api.telegram.org/bot' + app.TELEGRAM_API + '/deleteMessage',
         body: {
             'chat_id': _userid,
             'message_id': _messageid
