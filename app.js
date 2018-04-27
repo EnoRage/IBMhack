@@ -97,7 +97,7 @@ bot.dialog("sacrifice", [
     (session, results, next) => {
         db.user.addOrganisation(session.message.user.id, organisation.organisationID, results.response);
         db.user.updateBalance(session.message.user.id, results.response);
-        db.organisation.updateBalance(session.message.user.id, results.response);
+        db.organisation.updateBalance(organisation.organisationID, results.response);
         session.send('Вы успешно пожертвовали '+results.response+ ' у.е.');
         next();
     }
