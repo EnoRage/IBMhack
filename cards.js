@@ -2,7 +2,7 @@ const builder = require('botbuilder');
 
 function voteCard(session, msg, voteID) {
     return new builder.ReceiptCard(session)
-        .title(msg)
+        .text(msg)
         .facts([
 
         ])

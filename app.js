@@ -218,6 +218,7 @@ bot.dialog('doVote', [
                         let card = Card.voteCard(session, msg, votes[i].voteID);
                         var text = new builder.Message(session).addAttachment(card);
                         session.send(text);
+                        break;
                     }
                 }
             }
