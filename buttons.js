@@ -4,7 +4,6 @@ const buttons = {
         btn_organisation: /Организация/i,
         btn_investor: /Инвестор/i,
         btn_back: /❌  Назад/i,
-        btn_add_organisation: /Добавить организацию/i,
         btn_create_vote: /Создать голосование/i,
         btn_sacrifice: /Пожертвовать/i,
         btn_vote: /Проголосвать/i
@@ -13,7 +12,6 @@ const buttons = {
         btn_organisation: 'Организация',
         btn_investor: 'Инвестор',
         btn_back: '❌  Назад',
-        btn_add_organisation: 'Добавить организацию',
         btn_create_vote: 'Создать голосование',
         btn_sacrifice: 'Пожертвовать',
         btn_vote: 'Проголосвать'

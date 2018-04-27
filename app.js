@@ -47,14 +47,6 @@ bot.dialog("investor", [
     matches: Key.buttons.regular_expression.btn_investor
 });
 
-bot.dialog("add_organisation", [
-    (session, args, next) => {
-        session.send('Добавить орагнизацию');
-    }
-]).triggerAction({
-    matches: Key.buttons.regular_expression.btn_add_organisation
-});
-
 bot.dialog("create_vote", [
     (session, args, next) => {
         session.send('Создать голосование');
