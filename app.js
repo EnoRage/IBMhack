@@ -151,7 +151,7 @@ bot.dialog("vote", [
                 for (let j in session.userData.userOrganisations) {
                     if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID) {
                         counter++;
-                        let msg = 'Организация: ' + '**' + organisation.name + '**' + 'планирует собрать **' + votes[i].sum + ' у.е.**, ' + '+чтобы **' + votes[i].description + '**\n\n\0\n\nВы одобряете?';
+                        let msg = `Организация: **${organisation.name}** планирует собрать **${votes[i].sum} у.е.**, чтобы **${votes[i].description}**\n\n\0\n\nВы одобряете?`;
                         let card = Card.voteCard(session, msg, votes[i].voteID);
                         var text = new builder.Message(session).addAttachment(card);
                         session.send(text);
@@ -208,6 +208,26 @@ bot.dialog("sacrifice", [
     }
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_sacrifice
+});
+
+bot.dialog('accept_vote', [
+    (session, args, next) => {
+        var voteID = session.message.text.substring(6);
+        var vote = session.message.text.substr(5, 1);
+        
+        var voteText;
+        if (vote == "1") {
+            voteText = 'За';
+        } else {
+            voteText = 'Против';
+        }
+
+        db.voter.doVote(Number(voteID), session.message.user.id, Number(vote));
+        session.send(`Вы проголосовали ${voteText}`);
+        return;
+    }
+]).triggerAction({
+    matches: /vote_*/
 });
 
 bot.dialog('back', [
