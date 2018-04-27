@@ -124,7 +124,7 @@ bot.dialog("vote", [
                             counter++;
                             organisationNames.push(organisations[i].name);
                             console.log('dddd')
-                            return;
+                            break;
                         }
                     }
                 }
