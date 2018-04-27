@@ -10,8 +10,8 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 var inMemoryStorage = new builder.MemoryBotStorage();
 
 var connector = new builder.ChatConnector({
-    appId: "57456c4d-6eb3-4bbe-b33d-98c81dbd5281",
-    appPassword: "wxVCV0)[;bbktcGQIE7000("
+    appId: app.APP_ID,
+    appPassword: app.PASSWORD
 }); 
 
 server.post('/api/messages', connector.listen());
