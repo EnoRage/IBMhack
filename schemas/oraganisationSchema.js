@@ -3,7 +3,7 @@ const mongoose = require('mongoose'),
 var Schema = mongoose.Schema;
 var organisation = new Schema({
     organisationID: {
-        type: String
+        type: Number
     },
     name: {
         type: String,
