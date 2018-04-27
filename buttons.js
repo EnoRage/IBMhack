@@ -41,6 +41,9 @@ const keyboards = {
             text: buttons.normal_buttons.btn_add_organisation
         }, {
             text: buttons.normal_buttons.btn_create_vote
+        }],
+        [{
+            text: buttons.normal_buttons.btn_back
         }]
     ],
 
@@ -49,6 +52,9 @@ const keyboards = {
             text: buttons.normal_buttons.btn_sacrifice
         }, {
             text: buttons.normal_buttons.btn_vote
+        }],
+        [{
+            text: buttons.normal_buttons.btn_back
         }]
     ]
 }
