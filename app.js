@@ -151,7 +151,7 @@ bot.dialog("vote", [
                 for (let j in session.userData.userOrganisations) {
                     if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID) {
                         counter++;
-                        let msg = `Организация: **${organisation.name}** планирует собрать **${votes[i].sum} у.е.**, чтобы **${votes[i].description}**\n\n\0\n\nВы одобряете?`;
+                        let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\n\0\n\nВы одобряете?`;
                         let card = Card.voteCard(session, msg, votes[i].voteID);
                         var text = new builder.Message(session).addAttachment(card);
                         session.send(text);
@@ -215,16 +215,22 @@ bot.dialog('accept_vote', [
         var voteID = session.message.text.substring(6);
         var vote = session.message.text.substr(5, 1);
         
-        var voteText;
-        if (vote == "1") {
-            voteText = 'За';
-        } else {
-            voteText = 'Против';
-        }
-
-        db.voter.doVote(Number(voteID), session.message.user.id, Number(vote));
-        session.send(`Вы проголосовали ${voteText}`);
-        return;
+        db.voter.findVotersByVoteIDAndUserID(voteID, session.message.user.id, (voter) => {
+            if (voter.length == 0) {
+                var voteText;
+                if (vote == "1") {
+                    voteText = 'За';
+                } else {
+                    voteText = 'Против';
+                }
+        
+                db.voter.doVote(Number(voteID), session.message.user.id, Number(vote));
+                session.send(`Вы проголосовали ${voteText}`);
+                return;
+            } else {
+                session.send('Вы уже проголосовали.')
+            }
+        })
     }
 ]).triggerAction({
     matches: /vote_*/

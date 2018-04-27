@@ -103,6 +103,19 @@ var voter = {
 
             callback(doc);
         })
+    },
+    findVotersByVoteIDAndUserID: (voteID, userID, callback) => {
+        Voter.find({
+            voteID: voteID,
+            userID: userID
+        }, (err, doc) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            callback(doc);
+        })
     }
 }
 
