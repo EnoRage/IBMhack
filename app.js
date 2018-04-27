@@ -55,15 +55,28 @@ bot.dialog("create_vote", [
     matches: Key.buttons.regular_expression.btn_create_vote
 });
 
+var org_object;
 bot.dialog("sacrifice", [
     (session, args, next) => {
         db.organisation.findAll((organisations) => {
+            org_object = organisations;
             var organisationNames = [];
             for (let i in organisations) {
                 organisationNames.push(organisations[i].name);
             }
-            builder.Prompts.choice(session, "Choose organisation", organisationNames);
-        });   
+            builder.Prompts.choice(session, "Choose organisation", organisationNames, {
+                listStyle: builder.ListStyle.button
+            });
+        });
+    },
+    (session, results) => {
+        var organisation;
+        for (let i in org_object) {
+            if (org_object[i].name == results.response.entity) {
+                organisation = org_object[i];
+            }
+        }
+        session.send(organisation.name)
     }
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_sacrifice
@@ -100,7 +113,7 @@ bot.dialog('back', [
             var newDialogArr = dialogArr.slice(0, dialogArr.length - 1);
 
             session.userData.dialog = newDialogArr;
-            
+
 
             if (dialogArr.length - 1 < 0) {
                 session.beginDialog('start');

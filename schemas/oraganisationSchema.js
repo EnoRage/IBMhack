@@ -13,6 +13,7 @@ var organisation = new Schema({
         type: Number
     },
     capital: {
+        type: Number
     },
     country: {
         type: String
