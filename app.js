@@ -124,7 +124,7 @@ bot.dialog("show_tokens", [
         rp(options)
             .then(function (parsedBody) {
                 for (let i in parsedBody) {
-                    let msg = '**ID токена:** ' + parsedBody[i].animalId + '\n\n**Название токена:** ' + parsedBody[i].name +
+                    let msg = '**ID токена:** ' + parsedBody[i].animalId + '\n\n**Название токена:** ' + parsedBody[i].name
                     + '\n\n**Цена токена:** '+ parsedBody[i].proposedPrice + '\n\n**Владелец токена (инвестор):** '+parsedBody[i].holder + '\n\n**Владелец токена (организация):** ' + parsedBody[i].absoluteOwner;
                     session.send(msg);
                 }
