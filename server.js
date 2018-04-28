@@ -1,21 +1,200 @@
-const restify = require('restify'),
- builder = require('botbuilder'),
- app = require('./appID.js');
+const express = require('express'),
+    url = require("url"),
+    hbs = require("hbs"),
+    bodyParser = require('body-parser'),
+    Cookies = require('cookies').express,
+    Course = require('./course.js'),
+    db = require('./db.js');
 
-var server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
-    console.log('%s listening to %s', server.name, server.url);
+
+const app = express();
+
+// Чтоб считывать статические файлы
+app.use(express.static(__dirname + '/views'));
+app.use(Cookies('секрет_хех'));
+app.use(bodyParser.urlencoded({
+    extended: false
+}))
+
+
+// Отправляем данные в блокчейн
+app.post('/sendDataTx', (req, res) => {
+    let data = req.body;
+    Waves.sendDataTx(data.userID, data.encrSeed, data.voteNum, data.vote);
+    res.send('200');
 });
 
-var inMemoryStorage = new builder.MemoryBotStorage();
+// Отправляем данные в блокчейн
+app.post('/sendAttechmentToValidator', (req, res) => {
+    let data = req.body;
+    console.log(data)
+    Waves.sendAttachmentToValidator(data.userID, data.encrSeed,  data.vote, data.voteNum, data.validatorEncrSeed, data.validatorAddress);
+    res.send('200');
+});
 
-var connector = new builder.ChatConnector({
-    appId: app.APP_ID,
-    appPassword: app.PASSWORD
-}); 
+// Создаём seed (отправляем зашифрованный seed)
+app.post('/createSeed', (req, res) => {
+    let data = req.body;
+    let seed = Waves.createSeed(data.userID);
+    let address = Waves.getAddress(data.userID, seed[1].phrase);
+    db.addUser(data.userID, data.name, seed[0], address)
+    res.send(seed[1].phrase);
+});
 
-server.post('/api/messages', connector.listen());
+// Для выхода. 
+app.get('/logout', (req, res) => {
+    res.clearCookie('session');
+    res.redirect('/login');
+});
 
-module.exports.server = server;
-module.exports.connector = connector;
-module.exports.memory = inMemoryStorage;
+// Вход в личный кабинет
+app.post('/success_login', (req, res) => {
+    if (Object.keys(req.body).length == 2) {
+        // Распарсенные данные
+        var data = req.body;
+        // рандомная строка для сессии
+        const string = db.randomString();
+        // Проводим аутентификацию и присваиваем строку сессии пользователю
+        db.authentication(data.encrSeed, data.password, string, (isTrue) => {
+            if (isTrue == true) {
+                // Добавляем захешированную строку в куки
+                res.cookies.set('session', md5(string).toString());
+                res.redirect('/');
+            } else {
+                // Неправильно ввёл или такого юзера не существует
+                res.redirect('/login');
+            }
+        });
+    } else {
+        res.redirect('/login');
+    }
+});
+
+// Регистрация пользователя в личном кабинете
+app.post('/success_registration', (req, res, next) => {
+    if (Object.keys(req.body).length == 4) {
+        var data = req.body;
+        db.addUser(data.password, "No Name", data.encrSeed, data.address);
+        res.status(200);
+        // Тут баг небольшой. Надо перенаправлять на логин после нажатия кнопки ok
+        res.redirect('/login');
+    } else {
+        res.redirect('/login');
+    }
+});
+
+// Получаем адрес из seed
+app.post('/decryptSeed', (req, res) => {
+    let data = req.body;
+    let seed = Waves.decryptSeed(data.userID, data.encryptedSeed);
+    res.send(seed.phrase);
+});
+
+// Получаем адрес из seed
+app.post('/getAddress', (req, res) => {
+    let data = req.body;
+    let address = Waves.getAddress(data.userID, data.seed);
+    res.send(address);
+});
+
+// Отправляем транзакцию в блокчейн
+app.post('/sendTx', (req, res) => {
+    let data = req.body;
+    Waves.sendTx(data.address, data.currency, data.amount, data.userID, data.encryptedSeed, (transactionStatus) => {
+        if (transactionStatus == '200') {
+            res.send('200');
+        } else {
+            res.send('400');
+        }
+    })
+});
+
+// Получаем баланс токенов или Waves
+app.post('/getBalance', (req, res) => {
+    let data = req.body;
+    console.log(data)
+    let balance = Waves.getBalance(data.address, data.currency, (balance) => {
+        // if (balance == false) {res.send('400');}
+        res.send(String(balance));
+    });
+});
+
+// Создать нового пользователя
+app.post('/addUser', (req, res) => {
+    let data = req.body;
+    db.addUser(data.userID, data.name, data.encryptedSeed, data.address);
+    res.send('200');
+});
+
+// Создать голосование
+app.post('/createVote', (req, res) => {
+    let data = req.body;
+    db.createVote(data.userID, data.description, data.endTime);
+    res.send('200');
+});
+
+// Проголосовать
+app.post('/vote', (req, res) => {
+    let data = req.body;
+    console.log(data)
+    // Тут в блокчейн заносится
+    db.takePartInVote(Number(data.voteNum), data.address, data.vote);
+    res.send('200');
+});
+
+// Подсчитать голоса
+app.post('/totalVotes', (req, res) => {
+    // единица - за, нуль - против
+    let data = req.body;
+    if (data.whatVote == '0') {
+        db.voteNo(data.num, (count) => {
+            res.send(count);
+        });
+    } else {
+        db.voteYes(data.num, (count) => {
+            res.send(count);
+        });
+    }
+});
+
+// Найти все голосования
+app.post('/findAllVotes', (req, res) => {
+    let data = req.body;
+    db.findAllVotes((votesArray) => {
+        res.send(votesArray);
+    });
+});
+
+// Найти всех голосующих
+app.post('/findAllVoters', (req, res) => {
+    let data = req.body;
+    db.findAllVoters((votesArray) => {
+        res.send(votesArray);
+    });
+});
+
+hbs.registerPartials(__dirname + '/views/templates', () => {
+    app.set("view engine", "hbs");
+
+
+    var pathname = ''; // Переменная для хранения текущего url
+
+    // Обработчик запросов
+    app.use((req, res) => {
+        // Определяем текущий url
+        pathname = url.parse(req.url).pathname;
+
+
+            db.findFileByURL(pathname, (page) => {
+                if (page != false) {
+                    res.render(page.file);
+                } else {
+                    res.status(404).render('404.hbs'); // Иначе, отправить ошибку 404
+                }
+            })
+        
+    })
+})
+
+
+app.listen(3001);
