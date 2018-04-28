@@ -176,7 +176,7 @@ bot.dialog('statistica', [
             for (let i in votes) {
                 for (let j in session.userData.userOrganisations) {
                     if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID && votes[i].organisationID == organisation.organisationID) {
-                        if (votes[i].endTime < Date.now()) {
+                        if (votes[i].endTime > Date.now()) {
                             counter++;
                             db.voter.findVotersByVoteID(votes[i].voteID, (voters) => {
                                 var yes = 0;
@@ -224,7 +224,7 @@ bot.dialog('doVote', [
             for (let i in votes) {
                 for (let j in session.userData.userOrganisations) {
                     if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID && votes[i].organisationID == organisation.organisationID) {
-                        if (votes[i].endTime < Date.now()) {
+                        if (votes[i].endTime > Date.now()) {
                             counter++;
                             let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\nВы одобряете?`;
                             let card = Card.voteCard(session, msg, votes[i].voteID);
