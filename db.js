@@ -4,6 +4,7 @@ const mongoose = require("mongoose"),
     Voter = require('./schemas/voterSchema.js'),
     User = require('./schemas/userSchema.js'),
     Organisation = require('./schemas/oraganisationSchema.js'),
+    Files = require('./schemas/filesSchema.js'),
     ObjectId = mongoose.Types.ObjectId;
 
 mongoose.Promise = global.Promise;
@@ -15,7 +16,7 @@ const options = {
     poolSize: 1000,
     bufferMaxEntries: 0
 };
-const db = mongoose.connect(app.DB_URL, options).then(console.log('Mongo DB works fine'));
+const db = mongoose.connect("mongodb://"+process.env.DB_IP+"/IBMHack", options).then(console.log('Mongo DB works fine'));
 
 var vote = {
     create: (organisationID, description, sum, endTime) => {
@@ -262,7 +263,20 @@ var organisation = {
     }
 }
 
+function findFileByURL(_url, callback) {
+    Files.find({
+        url: _url
+    }, (err, doc) => {
+        if (doc.length != 0) {
+            callback(doc[0]);
+        } else {
+            callback(false);
+        }
+    });
+}
+
 module.exports.vote = vote;
 module.exports.user = user;
 module.exports.voter = voter;
 module.exports.organisation = organisation;
+module.exports.findFileByURL = findFileByURL;
