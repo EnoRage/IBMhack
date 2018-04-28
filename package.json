@@ -1,34 +1,25 @@
 {
-  "name": "wvote",
-  "version": "0.0.1",
-  "description": "Решение для Unblock Hackathon для голосования на Blockchain Waves",
-  "main": "db.js",
+  "name": "ibmhack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/EnoRage/WVote.git"
+    "url": "git+https://github.com/EnoRage/IBMhack.git"
   },
-  "author": "krboktv, ERage",
+  "author": "krboktv, enorage, maxUO",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/EnoRage/WVote/issues"
+    "url": "https://github.com/EnoRage/IBMhack/issues"
   },
-  "homepage": "https://github.com/EnoRage/WVote#readme",
+  "homepage": "https://github.com/EnoRage/IBMhack#readme",
   "dependencies": {
-    "body-parser": "^1.18.2",
-    "bs58": "^4.0.1",
-    "cookies": "^0.7.1",
-    "crypto-js": "^3.1.9-1",
-    "express": "^4.16.3",
-    "hbs": "^4.0.1",
-    "mongoose": "^5.0.13",
-    "request": "^2.85.0",
+    "botbuilder": "^3.14.1",
+    "mongoose": "^5.0.16",
     "request-promise": "^4.2.2",
-    "url": "^0.11.0",
-    "waves-api": "^0.24.2",
-    "waves-api-dtx": "^0.30.3"
+    "restify": "^7.1.1"
   }
 }
