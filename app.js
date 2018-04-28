@@ -76,13 +76,41 @@ bot.dialog("create_vote", [
     },
     (session, results, next) => {
         session.userData.description = results.response;
+        builder.Prompts.text(session, "Введите ID голосования");
+    },
+    (session, results, next) => {
+        session.userData.id = results.response;
         builder.Prompts.number(session, "Введите необходимую сумму");
     },
     (session, results, next) => {
         session.userData.sum = results.response;
         builder.Prompts.time(session, "Введите дату окончания голосования");
     },
+    
     (session, results, next) => {
+        var options = {
+            method: 'GET',
+            uri: 'http://rosum-rigovon.westeurope.cloudapp.azure.com:3000/api/createVote',
+            body: 
+                {
+                    "$class": "org.sample.createVote",
+                    "orgId": session.userData.id,
+                    "id": "2678",
+                    "description": session.userData.description,
+                    "voteFinalRes": true,
+                    "VoteRes": 0,
+                    "quantity": 0,
+                  }
+            ,
+            json: true
+        };
+
+        
+
+        rp(options)
+            .then(function (parsedBody) {
+                
+            })
         let endDate = new Date(builder.EntityRecognizer.resolveTime([results.response])).getTime();
         db.vote.create(organisation.organisationID, session.userData.description, session.userData.sum, endDate);
         session.send('Голосование успешно создано');
@@ -91,6 +119,7 @@ bot.dialog("create_vote", [
 ]).triggerAction({
     matches: Key.buttons.regular_expression.btn_create_vote
 });
+
 
 bot.dialog("show_votes", [
     (session, args, next) => {
