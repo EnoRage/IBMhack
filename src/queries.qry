@@ -1,13 +1,5 @@
-query AllSheeps {
-  description: "Select sheeps from animals"
+query AllOrgs {
+  description: "All orgs"
   statement: 
-    SELECT org.sample.Token
-      WHERE (species == 'SHEEP')
-}
-
-query AnimalsByType {
-  description: "Select all animals of given type"
-  statement:
-    SELECT org.sample.Token
-      WHERE (species == _$type)
+    SELECT org.sample.Organisation
 }
