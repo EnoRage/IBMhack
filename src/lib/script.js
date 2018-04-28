@@ -133,3 +133,24 @@ async function onProposeTrade(tx) {
     curProp.movementStatus = "STORED";
     await props.update(curProp);
   }
+
+  //////////////////////////////////////////////////////////////////////
+  /**
+   * @param {org.sample.sendToProvider} tx
+   * @transaction
+   */
+  async function sendToProvider(tx) {
+    const props = await getAssetRegistry('org.sample.Proposal');
+    let curProp = await props.get(tx.proposalId);
+
+    const provs = await getParticipantRegistry('org.sample.Provider')
+    let prov = await provs.get(tx.email);
+
+
+    if (curProp.voteFinalRes == true) {
+      prov.balance += curProp.quantity;
+    } 
+    
+    await props.update(curProp);
+    await provs.update(prov);
+  }

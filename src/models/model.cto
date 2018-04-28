@@ -92,3 +92,7 @@ transaction TryVote {
 transaction finalVote {
   o String proposalId
 }
+
+transaction sendToProvider {
+  o String proposalId
+}
