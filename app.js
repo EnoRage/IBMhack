@@ -131,7 +131,7 @@ bot.dialog("vote", [
                             }
                         }
                     }
-    
+
                     if (counter != 0) {
                         builder.Prompts.choice(session, "Чтобы посмотреть активные голосования - выберите организацию", organisationNames, {
                             listStyle: builder.ListStyle.button
@@ -142,7 +142,7 @@ bot.dialog("vote", [
                     }
                 } else {
                     session.send('Ещё не было создано ни одного голосования.')
-                }              
+                }
             });
         });
     },
@@ -180,23 +180,24 @@ bot.dialog('statistica', [
                         db.voter.findVotersByVoteID(votes[i].voteID, (voters) => {
                             var yes = 0;
                             var no = 0;
+                            if (votes[i].endTime < Date.now()) {
+                                if (voters.length != 0) {
+                                    for (let i in voters) {
+                                        if (voters[i].vote == 1) {
+                                            yes++;
+                                        } else {
+                                            no++;
+                                        }
 
-                            if (voters.length != 0) {
-                                for (let i in voters) {
-                                    if (voters[i].vote == 1) {
-                                        yes++;
-                                    } else {
-                                        no++;
+                                        let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\nСтатистака: \nЗа: ${yes} человек\nПротив: ${no} человек. Если вы ещё не голосовали - можете проголосовать`;
+                                        let card = Card.voteCard(session, msg, votes[i].voteID);
+                                        var text = new builder.Message(session).addAttachment(card);
+                                        session.send(text);
                                     }
-
-                                    let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\nСтатистака: \nЗа: ${yes} человек\nПротив: ${no} человек. Если вы ещё не голосовали - можете проголосовать`;
-                                    let card = Card.voteCard(session, msg, votes[i].voteID);
-                                    var text = new builder.Message(session).addAttachment(card);
-                                    session.send(text);
+                                } else {
+                                    session.send('Ещё никто не проголосвал за одно из пожертвований');
+                                    return;
                                 }
-                            } else {
-                                session.send('Ещё никто не проголосвал за одно из пожертвований');
-                                return;
                             }
                         });
                         break;
@@ -221,12 +222,14 @@ bot.dialog('doVote', [
             for (let i in votes) {
                 for (let j in session.userData.userOrganisations) {
                     if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID && votes[i].organisationID == organisation.organisationID) {
-                        counter++;
-                        let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\nВы одобряете?`;
-                        let card = Card.voteCard(session, msg, votes[i].voteID);
-                        var text = new builder.Message(session).addAttachment(card);
-                        session.send(text);
-                        break;
+                        if (votes[i].endTime < Date.now()) {
+                            counter++;
+                            let msg = `Организация: ${organisation.name} планирует собрать ${votes[i].sum} у.е., чтобы ${votes[i].description}\n\nВы одобряете?`;
+                            let card = Card.voteCard(session, msg, votes[i].voteID);
+                            var text = new builder.Message(session).addAttachment(card);
+                            session.send(text);
+                            break;
+                        }
                     }
                 }
             }
