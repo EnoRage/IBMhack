@@ -20,6 +20,13 @@ participant Investor identified by email {
   o Double balance
 }
 
+participant Provider identified by email {
+  o String email
+  o String firstName
+  o String lastName
+  o Double balance
+}
+
 participant Organisation identified by id {
   o String id
   o String info
@@ -80,4 +87,8 @@ transaction TryVote {
   o String investorId
   o Boolean voice
   o String propId
+}
+
+transaction finalVote {
+  o String proposalId
 }

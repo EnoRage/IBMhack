@@ -116,3 +116,20 @@ async function onProposeTrade(tx) {
     await proposerCollection.update(thisProp);
   }
   
+  //////////////////////////////////////////////////////////////////////
+  /**
+   * @param {org.sample.finalVote} tx
+   * @transaction
+   */
+  async function finalVote(tx) {
+    const props = await getAssetRegistry('org.sample.Proposal');
+    let curProp = await props.get(tx.proposalId);
+
+    if (curProp.VoteRes > 0) {
+      curProp.voteFinalRes = true;
+    } else {
+      curProp.voteFinalRes = false;
+    }
+    curProp.movementStatus = "STORED";
+    await props.update(curProp);
+  }
