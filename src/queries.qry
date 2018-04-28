@@ -3,3 +3,9 @@ query AllOrgs {
   statement: 
     SELECT org.sample.Organisation
 }
+
+query InvestorBal {
+  description: "Balance"
+  statement: 
+    SELECT org.sample.Investor
+}
