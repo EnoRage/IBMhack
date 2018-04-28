@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages:BasePage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="UnblockHackNET.UI.Pages.MainBurger.MainPage"
+    xmlns:pages="clr-namespace:UnblockHackNET.UI.Pages">
+    <StackLayout
+        Margin="10,20,10,0"
+        VerticalOptions="Center"
+        Spacing="20">
+        <Button
+            FontSize="Medium"
+            Text="Текущие голосования"
+            Command="{Binding GoToCurVotingCommand}">
+        </Button>
+        <Button
+            FontSize="Medium"
+            Text="Пожертвовать"
+            Command="{Binding GoToHistoryCommand}">
+        </Button>
+    </StackLayout>
+</pages:BasePage>

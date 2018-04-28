@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pages:BasePage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="UnblockHackNET.UI.Pages.CurrentVotings.CurrentVotingsPage"
+    xmlns:pages="clr-namespace:UnblockHackNET.UI.Pages"
+    Title="Текущие голосования">
+    <ListView
+        ItemTapped="Handle_ItemTapped"
+        VerticalOptions="FillAndExpand"
+        HorizontalOptions="FillAndExpand"
+        Margin="10,10,10,0"
+        HasUnevenRows="true"
+        IsPullToRefreshEnabled="true"
+        RefreshCommand="{Binding RefreshCommand}"
+        ItemsSource="{Binding RefreshChartItemSource}"
+        IsRefreshing="{Binding IsRefreshing}">
+        <ListView.Header>
+            <StackLayout
+                Margin="10,20,10,0">
+                <Label
+                    Text="Открытые голосования"
+                    HorizontalOptions="CenterAndExpand"
+                    HeightRequest="60">
+                </Label>
+            </StackLayout>
+        </ListView.Header>
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <TextCell Text="{Binding Description}"
+                           Detail="{Binding Quantity}">
+                </TextCell>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+</pages:BasePage>

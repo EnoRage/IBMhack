@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Update="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Pages\MainBurger\MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Pages\MainBurger\MenuPage.xaml.cs">
+      <DependentUpon>MenuPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Pages\VotingHistory\VotingHistoryPage.xaml.cs">
+      <DependentUpon>VotingHistoryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Pages\Auth\AuthPage.xaml.cs">
+      <DependentUpon>AuthPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="UI\Pages\Settings\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="2.5.1.444934" />
+    <PackageReference Include="Acr.UserDialogs" Version="7.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Xam.Plugin.Connectivity" Version="3.1.1" />
+    <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
+    <PackageReference Include="PCLCrypto" Version="2.0.147" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UI\Pages\MainBurger\" />
+    <Folder Include="BL\ViewModels\MainBurger\" />
+    <Folder Include="UI\Pages\CurrentVotings\" />
+    <Folder Include="BL\ViewModels\CurrentVotings\" />
+    <Folder Include="UI\Pages\VotingHistory\" />
+    <Folder Include="BL\ViewModels\VotingHistory\" />
+    <Folder Include="UI\Pages\Auth\" />
+    <Folder Include="UI\Pages\Settings\" />
+    <Folder Include="BL\ViewModels\Auth\" />
+    <Folder Include="BL\ViewModels\Settings\" />
+    <Folder Include="Weaves\" />
+  </ItemGroup>
+</Project>
