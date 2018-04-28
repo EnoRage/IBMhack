@@ -10,7 +10,8 @@ const buttons = {
         btn_balance: /Баланс/i,
         btn_doVote: /Проголосовать/i,
         btn_statistica: /Статистика/i,
-        btn_show_votes: /Показать организации/i
+        btn_show_votes: /Показать организации/i,
+        btn_show_tokens: /Показать токены/i,
     },
     normal_buttons: {
         btn_organisation: 'Организация',
@@ -22,7 +23,8 @@ const buttons = {
         btn_balance: 'Баланс',
         btn_doVote: 'Проголосовать',
         btn_statistica: 'Статистика',
-        btn_show_votes: 'Показать организации'
+        btn_show_votes: 'Показать организации',
+        btn_show_tokens: 'Показать токены',
     }
 }
 
@@ -35,8 +37,12 @@ const keyboards = {
             text: buttons.normal_buttons.btn_organisation
         }],
         [{
-            text: buttons.normal_buttons.btn_show_votes
-        }]
+                text: buttons.normal_buttons.btn_show_votes
+            },
+            {
+                text: buttons.normal_buttons.btn_show_tokens
+            }
+        ]
     ],
 
     organisation: [

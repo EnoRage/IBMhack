@@ -113,6 +113,28 @@ bot.dialog("show_votes", [
 }
 );
 
+bot.dialog("show_tokens", [
+    (session, args, next) => {
+        var options = {
+            method: 'GET',
+            uri: 'http://rosum-rigovon.westeurope.cloudapp.azure.com:3000/api/Token',
+            json: true
+        };
+
+        rp(options)
+            .then(function (parsedBody) {
+                for (let i in parsedBody) {
+                    let msg = 'ID токена: ' + parsedBody[i].id + '\n\nНазвание токена: ' + parsedBody[i].name + '\n\nБаланс: ' + parsedBody[i].balance 
+                    + '\n\nЦена токена: '+ parsedBody[i].proposedPrice + '\n\nВладелец токена (инвестор): '+parsedBody[i].holder + '\n\nВладелец токена (организация)' + parsedBody[i].absoluteOwner;
+                    session.send(msg);
+                }
+            })
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_show_tokens
+}
+);
+
 bot.dialog('back', [
     (session, err) => {
 
