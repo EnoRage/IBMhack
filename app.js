@@ -72,45 +72,45 @@ bot.dialog("organisation", [
 //     matches: Key.buttons.regular_expression.btn_balance
 // });
 
-// bot.dialog("create_vote", [
-//     (session, args, next) => {
-//         db.organisation.findAll((organisations) => {
-//             org_object = organisations;
-//             var organisationNames = [];
-//             for (let i in organisations) {
-//                 organisationNames.push(organisations[i].name);
-//             }
-//             builder.Prompts.choice(session, "Организация, которая создаёт голосование", organisationNames, {
-//                 listStyle: builder.ListStyle.button
-//             });
-//         });
-//     },
-//     (session, results, next) => {
-//         for (let i in org_object) {
-//             if (org_object[i].name == results.response.entity) {
-//                 organisation = org_object[i];
-//             }
-//         }
+bot.dialog("create_vote", [
+    (session, args, next) => {
+        db.organisation.findAll((organisations) => {
+            org_object = organisations;
+            var organisationNames = [];
+            for (let i in organisations) {
+                organisationNames.push(organisations[i].name);
+            }
+            builder.Prompts.choice(session, "Организация, которая создаёт голосование", organisationNames, {
+                listStyle: builder.ListStyle.button
+            });
+        });
+    },
+    (session, results, next) => {
+        for (let i in org_object) {
+            if (org_object[i].name == results.response.entity) {
+                organisation = org_object[i];
+            }
+        }
 
-//         builder.Prompts.text(session, "Введите описание пожертвования");
-//     },
-//     (session, results, next) => {
-//         session.userData.description = results.response;
-//         builder.Prompts.number(session, "Введите необходимую сумму");
-//     },
-//     (session, results, next) => {
-//         session.userData.sum = results.response;
-//         builder.Prompts.time(session, "Введите дату окончания голосования");
-//     },
-//     (session, results, next) => {
-//         let endDate = new Date(builder.EntityRecognizer.resolveTime([results.response])).getTime();
-//         db.vote.create(organisation.organisationID, session.userData.description, session.userData.sum, endDate);
-//         session.send('Голосование успешно создано');
-//         next();
-//     }
-// ]).triggerAction({
-//     matches: Key.buttons.regular_expression.btn_create_vote
-// });
+        builder.Prompts.text(session, "Введите описание пожертвования");
+    },
+    (session, results, next) => {
+        session.userData.description = results.response;
+        builder.Prompts.number(session, "Введите необходимую сумму");
+    },
+    (session, results, next) => {
+        session.userData.sum = results.response;
+        builder.Prompts.time(session, "Введите дату окончания голосования");
+    },
+    (session, results, next) => {
+        let endDate = new Date(builder.EntityRecognizer.resolveTime([results.response])).getTime();
+        db.vote.create(organisation.organisationID, session.userData.description, session.userData.sum, endDate);
+        session.send('Голосование успешно создано');
+        next();
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_create_vote
+});
 
 
 // bot.dialog("vote", [
