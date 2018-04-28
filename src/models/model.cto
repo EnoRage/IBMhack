@@ -1,32 +1,14 @@
 namespace org.sample
 
 /**
- * The types of animals that could be moved
- */
-enum AnimalType {
-  o SHEEP
-  o CATTLE
-  o PIG
-}
-
-/**
  * The movement status for an Token
  */
 enum MovementStatus {
-  o IN_FIELD
+  o STORED
   o IN_TRANSIT
 }
 
-/**
- * The production type associated with an Token
- */
-enum ProductionType {
-  o MEAT
-  o WOOL
-  o DAIRY
-  o BREEDING
-  o OTHER
-}
+
 
 /**
  * A Investor participant
@@ -57,13 +39,10 @@ asset Proposal identified by proposalId {
 /**
  * An Token asset
  */
-asset Token identified by animalId {
-    o String animalId
+asset Token identified by tokenId {
+    o String tokenId
     o String name
-    o String colour
-    o AnimalType species
     o MovementStatus movementStatus
-    o ProductionType productionType
     o Double proposedPrice optional
     --> Investor holder optional
     --> Organisation absoluteOwner
@@ -73,31 +52,23 @@ asset Token identified by animalId {
  * A transaction type for an Token leaving a farm
  */
 transaction ProposeTrade {
+  o String orgId
+  o String tokenName
+  o MovementStatus movementStatus
   o Double price
-  --> Token Token
+  o String tokenId
 }
 
 /**
  * A transaction type for an Token arriving to the Investor
  */
 transaction AcceptTrade {
-  --> Token Token
-}
-
-/**
- * A transaction type for an Token returning to its owner
- */
-transaction CancelTrade {
-  --> Token Token
-}
-/**
- * Set initial data to the model
- */
-transaction SetupDemo  {
+  o String investorId
+  o String tokenId
 }
 
 transaction createVote {
-  --> Organisation org
+  o String orgId
   o String id
   o String description
   o Boolean voteFinalRes 
@@ -106,6 +77,7 @@ transaction createVote {
 }
 
 transaction TryVote {
+  o String investorId
   o Boolean voice
-  --> Proposal props
+  o String propId
 }

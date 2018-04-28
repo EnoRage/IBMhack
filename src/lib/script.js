@@ -5,21 +5,28 @@
  */
 async function onProposeTrade(tx) {
 
+   const ar = await getAssetRegistry('org.sample.Token');
+   const orgs = await getParticipantRegistry('org.sample.Organisation');
+   const thatOrg = await orgs.get(tx.orgId);
+   var factory = await getFactory();
+   var newToken = await factory.newResource('org.sample', 'Token', tx.tokenId);
     // change the movement status of the Token
-    tx.Token.movementStatus = 'IN_TRANSIT';
+    newToken.movementStatus = 'IN_TRANSIT';
   
     if (tx.price <= 0) {
       throw new Error("Invalid price");
     }
-  
+    newToken.name = tx.tokenName;
+    newToken.movementStatus = tx.movementStatus;
+    newToken.absoluteOwner = thatOrg;
     // set the proposed price
-    tx.Token.proposedPrice = tx.price;
+    newToken.proposedPrice = tx.price;
   
     // get tokens registry
-    const ar = await getAssetRegistry('org.sample.Token');
+    //const ar = await getAssetRegistry('org.sample.Token');
   
     // update the Token in the registry
-    await ar.update(tx.Token)
+    await ar.add(newToken)
   }
   
   //////////////////////////////////////////////////////////////////////
@@ -28,7 +35,9 @@ async function onProposeTrade(tx) {
    * @transaction
    */
   async function createVote(tx) {
-
+    const orgs = await getParticipantRegistry('org.sample.Organisation');
+    const thatOrg = await orgs.get(tx.orgId);
+    
     const ar = await getAssetRegistry('org.sample.Proposal');
     var factory = await getFactory();
     var newProp = await factory.newResource('org.sample', 'Proposal', tx.id);
@@ -41,7 +50,7 @@ async function onProposeTrade(tx) {
     newProp.voteFinalRes = tx.voteFinalRes
     newProp.VoteRes = tx.VoteRes
     newProp.quantity = tx.quantity;
-    newProp.absoluteOwner = tx.org;
+    newProp.absoluteOwner = thatOrg;
     newProp.movementStatus = 'IN_TRANSIT';
     await ar.add(newProp);
     // update the Token in the registry
@@ -58,42 +67,30 @@ async function onProposeTrade(tx) {
     // get investors registry
     const fr = await getParticipantRegistry('org.sample.Investor');
     const orgs = await getParticipantRegistry('org.sample.Organisation');
-  
-    //const orgs = await getParticipantRegistry('org.sample.Organisation');
-  
-    //const thatOrg = await orgs.get(orgs.getParticipantRegistry(tx.absoluteOwner).getIdentifier());
-  
-    // find the proper Investor in the registry
-    const investor = await fr.get(getCurrentParticipant().getIdentifier());
-  
+    const tokens = await getAssetRegistry('org.sample.Token');
+    const thisToken = await tokens.get(tx.tokenId);
+    const investor = await fr.get(tx.investorId);
+
     // find the Token's owner
-    const absoluteOwner = await orgs.get(tx.Token.absoluteOwner.getIdentifier());
+    const absoluteOwner = await orgs.get(thisToken.absoluteOwner.getIdentifier());
   
-    if (investor.balance < tx.Token.proposedPrice) {
+    if (investor.balance < thisToken.proposedPrice) {
       throw new Error("Not enough money on your balance");
     }
   
     // reduce the Investor's balance
-    investor.balance -= tx.Token.proposedPrice;
+    investor.balance -= thisToken.proposedPrice;
     // add money to owner's balance
-    absoluteOwner.balance += tx.Token.proposedPrice;
+    absoluteOwner.balance += thisToken.proposedPrice;
     // change the Token's status
-    tx.Token.movementStatus = 'IN_FIELD';
+    thisToken.movementStatus = 'STORED';
     // change the Token's owner
-    tx.Token.holder = investor;
-    // // zero the proposed price
-    // tx.Token.proposedPrice = 0.0;
-  
-    // update Investor in the registry
+    thisToken.holder = investor;
+
     await fr.update(investor);
     await orgs.update(absoluteOwner);
-    // update old owner in the registry
-    //await fr.update(absoluteOwner);
-  
-    // get tokens registry
-    const ar = await getAssetRegistry('org.sample.Token');
-    // update the Token in the registry
-    await ar.update(tx.Token);
+
+    await tokens.update(thisToken);
   }
   
   //////////////////////////////////////////////////////////////////////
@@ -102,94 +99,20 @@ async function onProposeTrade(tx) {
    * @transaction
    */
   async function TryVote(tx) {
-    // throw new Error(tx.props.proposalId);
+    const fr = await getParticipantRegistry('org.sample.Investor');
+    const investor = await fr.get(tx.investorId);
+
+
+    const proposerCollection = await getAssetRegistry('org.sample.Proposal');
+    var thisProp = await proposerCollection.get(tx.propId);
+
     if(tx.voice){
-      tx.props.VoteRes += 1.0;
+      thisProp.VoteRes += 1.0;
     }
     else{
-      tx.props.VoteRes -= 1.0;
+      thisProp.VoteRes -= 1.0;
     }
-    const proposerCollection = await getAssetRegistry('org.sample.Proposal');
-    //const absProp = await proposerCollection.get(tx.props.getIdentifier());
-  
-    await proposerCollection.update(tx.props);
+
+    await proposerCollection.update(thisProp);
   }
   
-  
-  //////////////////////////////////////////////////////////////////////
-  /**
-   * @param {org.sample.CancelTrade} tx
-   * @transaction
-   */
-  async function onCancelTrade(tx) {
-  
-    // change the Token's status
-    tx.Token.movementStatus = 'IN_FIELD';
-    // zero the proposed price
-    tx.Token.proposedPrice = 0.0;
-  
-    const ar = await getAssetRegistry('org.sample.Token');
-    // update the Token in the registry
-    await ar.update(tx.Token);
-  }
-  
-  
-  //////////////////////////////////////////////////////////////////////
-  /**
-   * @param {org.sample.SetupDemo} setupDemo
-   * @transaction
-   */
-  async function setupDemo(setupDemo) {
-    
-    const factory = getFactory();
-    const NS = 'org.sample';
-  
-    // get registries
-    const farmerRegistry = await getParticipantRegistry(NS + '.Investor');
-    const animalRegistry = await getAssetRegistry(NS + '.Token');
-  
-    // create investors
-    var investors = [
-      factory.newResource(NS, 'Investor', 'investor@village.com')
-    ];
-  
-    // create tokens
-    var tokens = [
-      factory.newResource(NS, 'Token', 'token1'),
-      factory.newResource(NS, 'Token', 'token2')
-    ];
-  
-    // fill investors with basic info
-    investors[0].firstName = 'Bartholomew';
-    investors[0].lastName = 'Carley';
-    investors[0].balance = 100.0;
-  
-    investors[1].firstName = 'Chadwick';
-    investors[1].lastName = 'Cherokee';
-    investors[1].balance = 100.0;
-  
-    investors[2].firstName = 'Franklin';
-    investors[2].lastName = 'Harcourt';
-    investors[2].balance = 100.0;
-  
-    // write investors to the registry
-    await farmerRegistry.addAll(investors);
-  
-    // fill tokens with basic info
-    tokens[0].species = 'SHEEP';
-    tokens[0].name = 'Molly';
-    tokens[0].colour = 'White';
-    tokens[0].movementStatus = 'IN_FIELD';
-    tokens[0].productionType = 'MEAT';
-    tokens[0].owner = factory.newRelationship(NS, 'Investor', investors[0].email);
-  
-    tokens[1].species = 'CATTLE';
-    tokens[1].name = 'Dolly';
-    tokens[1].colour = 'Black';
-    tokens[1].movementStatus = 'IN_FIELD';
-    tokens[1].productionType = 'WOOL';
-    tokens[1].owner = factory.newRelationship(NS, 'Investor', investors[1].email);
-  
-    // write tokens to the registry
-    await animalRegistry.addAll(tokens);
-  }

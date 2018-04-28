@@ -242,21 +242,3 @@ rule UpdateInvestorWithTransactionAcceptTrade {
   transaction: "org.sample.AcceptTrade"
   action: ALLOW
 }
-//potom
-rule InvestorSubmitCancelTrade {
-  description: "Allow cancelling the trade"
-  participant: "org.sample.Investor"
-  operation: CREATE, READ
-  resource: "org.sample.CancelTrade"
-  action: ALLOW
-}
-//potom
-rule UpdateTokensWithTransactionCancelTrade {
-  description: "Allow to change Token's status when cancelling the trade"
-  participant(p): "org.sample.Investor"
-  operation: READ, UPDATE
-  resource(r): "org.sample.Token"
-  transaction(tx): "org.sample.CancelTrade"
-  condition: (r.owner.getIdentifier() == p.getIdentifier() && r.movementStatus == 'IN_TRANSIT')
-  action: ALLOW
-}
