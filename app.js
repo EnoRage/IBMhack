@@ -103,7 +103,7 @@ bot.dialog("show_votes", [
         rp(options)
             .then(function (parsedBody) {
                 for (let i in parsedBody) {
-                    let msg = 'ID организации: ' + parsedBody[i].id + '\n\nInfo: ' + parsedBody[i].info + '\n\nБаланс: ' + parsedBody[i].balance;
+                    let msg = '**ID организации:** ' + parsedBody[i].id + '\n\n**Info:** ' + parsedBody[i].info + '\n\n**Баланс:** ' + parsedBody[i].balance;
                     session.send(msg);
                 }
             })
@@ -124,8 +124,8 @@ bot.dialog("show_tokens", [
         rp(options)
             .then(function (parsedBody) {
                 for (let i in parsedBody) {
-                    let msg = 'ID токена: ' + parsedBody[i].id + '\n\nНазвание токена: ' + parsedBody[i].name + '\n\nБаланс: ' + parsedBody[i].balance 
-                    + '\n\nЦена токена: '+ parsedBody[i].proposedPrice + '\n\nВладелец токена (инвестор): '+parsedBody[i].holder + '\n\nВладелец токена (организация)' + parsedBody[i].absoluteOwner;
+                    let msg = '**ID токена:** ' + parsedBody[i].animalId + '\n\n**Название токена:** ' + parsedBody[i].name +
+                    + '\n\n**Цена токена:** '+ parsedBody[i].proposedPrice + '\n\n**Владелец токена (инвестор):** '+parsedBody[i].holder + '\n\n**Владелец токена (организация):** ' + parsedBody[i].absoluteOwner;
                     session.send(msg);
                 }
             })
