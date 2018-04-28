@@ -313,41 +313,41 @@ bot.dialog("organisation", [
 //     matches: /vote_*/
 // });
 
-// bot.dialog('back', [
-//     (session, err) => {
+bot.dialog('back', [
+    (session, err) => {
 
-//         var dialogArr = session.userData.lastDialog;
+        var dialogArr = session.userData.lastDialog;
 
-//         if (dialogArr != undefined && dialogArr.length != 0) {
-//             // создаётся для того, чтоб индексы не уменьшались
-//             var arrLength = dialogArr.length;
+        if (dialogArr != undefined && dialogArr.length != 0) {
+            // создаётся для того, чтоб индексы не уменьшались
+            var arrLength = dialogArr.length;
 
-//             var dialogArrCur = session.userData.dialog;
+            var dialogArrCur = session.userData.dialog;
 
-//             // Проверка на спам одним и тем же диалогом
-//             var i = 0;
-//             for (var j = 0; j < arrLength; j++) {
-//                 if (dialogArr[j - i] == dialogArrCur[dialogArrCur.length - 1]) {
-//                     dialogArr.splice(j - i, 1);
-//                     i = i + 1;
-//                 }
-//             }
+            // Проверка на спам одним и тем же диалогом
+            var i = 0;
+            for (var j = 0; j < arrLength; j++) {
+                if (dialogArr[j - i] == dialogArrCur[dialogArrCur.length - 1]) {
+                    dialogArr.splice(j - i, 1);
+                    i = i + 1;
+                }
+            }
 
-//             var newDialogArr = dialogArr.slice(0, dialogArr.length - 1);
+            var newDialogArr = dialogArr.slice(0, dialogArr.length - 1);
 
-//             session.userData.dialog = newDialogArr;
+            session.userData.dialog = newDialogArr;
 
 
-//             if (dialogArr.length - 1 < 0) {
-//                 session.beginDialog('start');
-//             } else {
-//                 session.beginDialog(dialogArr[dialogArr.length - 1]);
-//             }
+            if (dialogArr.length - 1 < 0) {
+                session.beginDialog('start');
+            } else {
+                session.beginDialog(dialogArr[dialogArr.length - 1]);
+            }
 
-//         } else {
-//             session.beginDialog('start');
-//         }
-//     }
-// ]).triggerAction({
-//     matches: Key.buttons.regular_expression.btn_back
-// });
+        } else {
+            session.beginDialog('start');
+        }
+    }
+]).triggerAction({
+    matches: Key.buttons.regular_expression.btn_back
+});
