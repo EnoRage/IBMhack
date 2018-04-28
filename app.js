@@ -176,11 +176,12 @@ bot.dialog('statistica', [
             for (let i in votes) {
                 for (let j in session.userData.userOrganisations) {
                     if (votes[i].organisationID == session.userData.userOrganisations[j].organisationID && votes[i].organisationID == organisation.organisationID) {
-                        counter++;
-                        db.voter.findVotersByVoteID(votes[i].voteID, (voters) => {
-                            var yes = 0;
-                            var no = 0;
-                            if (votes[i].endTime < Date.now()) {
+                        if (votes[i].endTime < Date.now()) {
+                            counter++;
+                            db.voter.findVotersByVoteID(votes[i].voteID, (voters) => {
+                                var yes = 0;
+                                var no = 0;
+
                                 if (voters.length != 0) {
                                     for (let i in voters) {
                                         if (voters[i].vote == 1) {
@@ -198,8 +199,9 @@ bot.dialog('statistica', [
                                     session.send('Ещё никто не проголосвал за одно из пожертвований');
                                     return;
                                 }
-                            }
-                        });
+
+                            });
+                        }
                         break;
                     }
                 }
