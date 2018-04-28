@@ -31,9 +31,6 @@ const keyboards = {
     mainMenu: [
         [{
             text: buttons.normal_buttons.btn_organisation
-        }],
-        [{
-            text: buttons.normal_buttons.btn_investor
         }]
     ],
 
