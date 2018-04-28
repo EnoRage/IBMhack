@@ -28,15 +28,24 @@ async function onProposeTrade(tx) {
    * @transaction
    */
   async function createVote(tx) {
+
+    const ar = await getAssetRegistry('org.sample.Proposal');
+    var factory = await getFactory();
+    var newProp = await factory.newResource('org.sample', 'Proposal', tx.id);
   
     // change the movement status of the Token
-    tx.props.movementStatus = 'IN_TRANSIT';
-  
+    
     // get tokens registry
-    const ar = await getAssetRegistry('org.sample.Proposal');
   
+    newProp.description = tx.description
+    newProp.voteFinalRes = tx.voteFinalRes
+    newProp.VoteRes = tx.VoteRes
+    newProp.quantity = tx.quantity;
+    newProp.absoluteOwner = tx.org;
+    newProp.movementStatus = 'IN_TRANSIT';
+    await ar.add(newProp);
     // update the Token in the registry
-    await ar.update(tx.props)
+    //await ar.update(tx.props)
   }
   
   //////////////////////////////////////////////////////////////////////
@@ -93,17 +102,17 @@ async function onProposeTrade(tx) {
    * @transaction
    */
   async function TryVote(tx) {
-    throw new Error(tx.props.proposalId);
+    // throw new Error(tx.props.proposalId);
     if(tx.voice){
       tx.props.VoteRes += 1.0;
     }
     else{
       tx.props.VoteRes -= 1.0;
     }
-    const proposerCollection = await getAssetRegistry("org.sample.Proposal");
-    const absProp = await proposerCollection.get(tx.props.proposalId.getIdentifier());
+    const proposerCollection = await getAssetRegistry('org.sample.Proposal');
+    //const absProp = await proposerCollection.get(tx.props.getIdentifier());
   
-    await proposerCollection.update(absProp);
+    await proposerCollection.update(tx.props);
   }
   
   
@@ -131,7 +140,7 @@ async function onProposeTrade(tx) {
    * @transaction
    */
   async function setupDemo(setupDemo) {
-  
+    
     const factory = getFactory();
     const NS = 'org.sample';
   

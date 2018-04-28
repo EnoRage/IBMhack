@@ -98,7 +98,11 @@ transaction SetupDemo  {
 
 transaction createVote {
   --> Organisation org
-  --> Proposal props
+  o String id
+  o String description
+  o Boolean voteFinalRes 
+  o Double VoteRes
+  o Double quantity
 }
 
 transaction TryVote {

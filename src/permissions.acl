@@ -18,6 +18,42 @@ rule NetworkAdminUser {
     action: ALLOW
 }
 
+rule OrgFix1 {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.sample.Organisation"
+    operation: CREATE
+    resource: "org.sample.createVote"
+    action: ALLOW
+}
+
+rule InvestorFix1 {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.sample.Investor"
+    operation: CREATE
+    resource: "org.sample.TryVote"
+    action: ALLOW
+}
+
+rule InvestorFix2 {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.sample.Investor"
+    operation: UPDATE
+    resource: "org.sample.Proposal"
+    transaction(tx): "org.sample.TryVote"
+    condition: (true)
+    action: ALLOW
+}
+
+rule OrgFix2 {
+    description: "Grant business network administrators full access to user resources"
+    participant: "org.sample.Organisation"
+    operation: UPDATE
+    resource: "org.sample.Proposal"
+    transaction(tx): "org.sample.createVote"
+    condition: (true)
+    action: ALLOW
+}
+
 rule NetworkAdminSystem {
     description: "Grant business network administrators full access to system resources"
     participant: "org.hyperledger.composer.system.NetworkAdmin"
@@ -57,6 +93,26 @@ rule InvestorAccessToAllOrgs {
   participant(p): "org.sample.Investor"
   operation: READ
   resource(r): "org.sample.Organisation"
+  condition: (true)
+  action: ALLOW
+}
+
+rule TryVoteInv {
+  description: "Investor access"
+  participant(p): "org.sample.Investor"
+  operation: ALL
+  resource(r): "org.sample.Proposal"
+  transaction(tx): "org.sample.ProposeTrade"
+  condition: (true)
+  action: ALLOW
+}
+
+rule TryVoteOrg {
+  description: "Investor access"
+  participant(p): "org.sample.Organisation"
+  operation: ALL
+  resource(r): "org.sample.Proposal"
+  transaction(tx): "org.sample.ProposeTrade"
   condition: (true)
   action: ALLOW
 }
